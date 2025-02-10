@@ -2,6 +2,7 @@ import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDeb } from '@electron-forge/maker-deb';
 import { MakerRpm } from '@electron-forge/maker-rpm';
+import { MakerDMG } from '@electron-forge/maker-dmg';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
@@ -9,7 +10,7 @@ import { FuseV1Options, FuseVersion } from '@electron/fuses';
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
-    icon: './assets/icon',
+    icon: 'assets/icons/icon',
     name: 'HermesX',
     executableName: 'hermesx',
     appBundleId: 'com.florianbeisel.hermesx',
@@ -24,7 +25,7 @@ const config: ForgeConfig = {
       options: {
         maintainer: 'Florian Beisel',
         homepage: 'https://your-website.com',
-        icon: './assets/icon.png'
+        icon: 'assets/icons/icon.png'
       }
     }),
     {
@@ -33,11 +34,14 @@ const config: ForgeConfig = {
         name: 'zeiterfassung-reminder',
         authors: 'Florian Beisel',
         description: 'Work time tracking reminder application',
-        iconUrl: 'https://raw.githubusercontent.com/yourusername/zeiterfassung-reminder/main/assets/icon.ico',
-        setupIcon: './assets/icon.ico',
-        loadingGif: './assets/installer.gif'
+        iconUrl: 'https://raw.githubusercontent.com/yourusername/zeiterfassung-reminder/main/assets/icons/icon.ico',
+        setupIcon: 'assets/icons/icon.ico'
       },
     },
+    new MakerDMG({
+      icon: 'assets/icons/icon.icns',
+      format: 'ULFO'
+    }, ['darwin']),
   ],
   plugins: [
     new VitePlugin({
