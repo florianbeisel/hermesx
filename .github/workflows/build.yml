@@ -1,4 +1,5 @@
 name: Build
+
 on:
   push:
     branches: [ main ]
@@ -12,8 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, macos-latest]
-
+        os: [ windows-latest, macos-latest ]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,7 +30,7 @@ jobs:
 
       - name: Build icons
         run: yarn build:icons
-        
+
       - name: Build app
         run: yarn make
         env:
@@ -62,11 +62,9 @@ jobs:
 
       - name: Semantic Release
         id: semantic
+        uses: amondnet/semantic-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          yarn add -D @semantic-release/git @semantic-release/changelog @semantic-release/npm
-          npx semantic-release
 
       - name: Download all artifacts
         if: steps.semantic.outputs.new_release_published == 'true'
@@ -83,4 +81,4 @@ jobs:
             if [ -f "$file" ]; then
               gh release upload "v${{ steps.semantic.outputs.new_release_version }}" "$file" --clobber
             fi
-          done 
+          done
