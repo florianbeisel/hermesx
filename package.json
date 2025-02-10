@@ -1,0 +1,86 @@
+{
+  "name": "hermesx",
+  "productName": "HermesX",
+  "version": "1.0.0",
+  "description": "HermesX - A companion app for the ZeusX time tracking system",
+  "main": ".vite/build/main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "eslint --ext .ts,.tsx .",
+    "build:icons": "electron-icon-builder --input=./assets/icon.png --output=./assets --flatten"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.6.1",
+    "@electron-forge/maker-deb": "^7.6.1",
+    "@electron-forge/maker-rpm": "^7.6.1",
+    "@electron-forge/maker-squirrel": "^7.6.1",
+    "@electron-forge/maker-zip": "^7.6.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.6.1",
+    "@electron-forge/plugin-fuses": "^7.6.1",
+    "@electron-forge/plugin-vite": "^7.6.1",
+    "@electron/fuses": "^1.8.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "electron": "34.0.2",
+    "electron-builder": "^25.1.8",
+    "electron-icon-builder": "^2.0.1",
+    "eslint": "^8.0.1",
+    "eslint-plugin-import": "^2.25.0",
+    "ts-node": "^10.0.0",
+    "typescript": "~4.5.4",
+    "vite": "^5.0.12"
+  },
+  "keywords": [
+    "electron",
+    "time-tracking",
+    "productivity",
+    "reminder"
+  ],
+  "author": {
+    "name": "Florian Beisel",
+    "email": "florian.beisel@intersport.de",
+    "url": "https://github.com/florianbeisel"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/florianbeisel/hermesx"
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610",
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1",
+    "electron-updater": "^6.3.9",
+    "keytar": "^7.9.0",
+    "vite-plugin-electron": "^0.29.0"
+  },
+  "build": {
+    "appId": "com.florianbeisel.hermesx",
+    "productName": "HermesX",
+    "files": [
+      "**/*",
+      "assets/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "extraResources": [
+      {
+        "from": "assets",
+        "to": "assets",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "electronVersion": "latest",
+    "mac": {
+      "entitlements": {
+        "com.apple.security.device.camera": true,
+        "com.apple.security.device.microphone": true
+      }
+    }
+  }
+}
