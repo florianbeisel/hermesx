@@ -240,8 +240,8 @@ export async function performAction(action: WorkAction) {
 function createTray() {
   // Get the appropriate icon path based on platform
   const iconPath = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets/icons', process.platform === 'win32' ? 'icon.ico' : 'icon.png')
-    : path.join(process.cwd(), 'assets/icons', process.platform === 'win32' ? 'icon.ico' : 'icon.png');
+    ? path.join(process.resourcesPath, 'icons', process.platform === 'win32' ? 'icon.ico' : 'icon.png')
+    : path.join(process.cwd(), 'assets', 'icons', process.platform === 'win32' ? 'icon.ico' : 'icon.png');
 
   // Create the tray icon with platform-specific settings
   if (process.platform === 'win32') {

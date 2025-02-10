@@ -16,8 +16,19 @@ const config: ForgeConfig = {
     appBundleId: 'com.florianbeisel.hermesx',
     appCategoryType: 'public.app-category.productivity',
     appCopyright: `Copyright © ${new Date().getFullYear()} Florian Beisel`,
-    extraResource: ['assets/icons'],
+    extraResource: ['assets/icons', 'build/app-update.yml', 'build/dev-app-update.yml'],
   },
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'florianbeisel',
+          name: 'hermesx'
+        }
+      }
+    }
+  ],
   rebuildConfig: {},
   makers: [
     new MakerZIP({}, ['darwin', 'win32']),
