@@ -1,5 +1,6 @@
 import { app, BrowserWindow, Tray, Menu, nativeImage, ipcMain, systemPreferences } from 'electron';
 import path from 'node:path';
+import fs from 'node:fs';
 import { ConfigManager, UserConfig } from './ConfigManager';
 import { NotificationManager } from './NotificationManager';
 import { StateMachine, WorkState, WorkAction, STATE_EMOJIS } from './StateMachine';
@@ -8,7 +9,10 @@ import { SettingsWindow } from './SettingsWindow';
 import { CredentialManager } from './CredentialManager';
 import { AutoUpdater } from './AutoUpdater';
 
-if (require('electron-squirrel-startup')) app.quit();
+import started from 'electron-squirrel-startup';
+if (started) {
+  app.quit();
+}
 
 // Global variable declarations
 let tray: Tray | null = null;
@@ -240,12 +244,12 @@ export async function performAction(action: WorkAction) {
 function createTray() {
   // Get the appropriate icon path based on platform
   const iconPath = app.isPackaged
-    ? path.join(process.resourcesPath, 'icons', process.platform === 'win32' ? 'icon.ico' : 'icon.png')
-    : path.join(process.cwd(), 'assets', 'icons', process.platform === 'win32' ? 'icon.ico' : 'icon.png');
+    ? path.join(process.resourcesPath, 'assets', process.platform === 'win32' ? 'icon.ico' : 'icon.png')
+    : path.join(process.cwd(), 'assets', process.platform === 'win32' ? 'icon.ico' : 'icon.png');
 
   // Create the tray icon with platform-specific settings
   if (process.platform === 'win32') {
-    // For Windows, use ICO format without resizing
+    // For Windows, use ICO format and don't resize
     tray = new Tray(iconPath);
   } else {
     // For other platforms, use PNG and resize if needed
