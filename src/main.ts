@@ -19,6 +19,7 @@ let tray: Tray | null = null;
 let workMonitor: WorkMonitor;
 const credentialManager = new CredentialManager();
 let menuUpdateTimer: ReturnType<typeof setInterval> | null = null;
+let isQuitting = false;
 
 // Initialize core services first
 const configManager = new ConfigManager();
@@ -81,6 +82,14 @@ function createWindow () {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
       }
     });
+  });
+
+  // Add this window management logic
+  win.on('close', (event) => {
+    // Prevent the window from being destroyed
+    event.preventDefault();
+    // Hide the window instead
+    win.hide();
   });
 
   return win;
@@ -363,7 +372,10 @@ function updateContextMenu() {
     { type: 'separator' as const },
     {
       label: 'Quit',
-      click: () => app.quit()
+      click: () => {
+        isQuitting = true;
+        app.quit();
+      }
     }
   ].filter(item => item !== null) as Electron.MenuItemConstructorOptions[];
 
@@ -489,20 +501,21 @@ app.whenReady().then(() => {
   }
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
+// Update the window-all-closed handler
+app.on('window-all-closed', function() {
+  if (process.platform !== 'darwin' && isQuitting) {
+    app.quit();
   }
-})
+});
 
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
-  }
-})
-
+// Update before-quit handler
 app.on('before-quit', () => {
-  if (menuUpdateTimer) {
-    clearInterval(menuUpdateTimer);
+  isQuitting = true;
+});
+
+// Modify tray click handler if you have one
+tray.on('click', () => {
+  if (BrowserWindow.getAllWindows().length > 0) {
+    BrowserWindow.getAllWindows()[0].hide();
   }
 });
