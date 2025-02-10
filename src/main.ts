@@ -8,7 +8,7 @@ import { SettingsWindow } from './SettingsWindow';
 import { CredentialManager } from './CredentialManager';
 import { AutoUpdater } from './AutoUpdater';
 
-// import started from 'electron-squirrel-startup';
+if (require('electron-squirrel-startup')) app.quit();
 
 // Global variable declarations
 let tray: Tray | null = null;
