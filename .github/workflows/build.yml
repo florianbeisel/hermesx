@@ -31,7 +31,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          yarn add -D @semantic-release/git @semantic-release/changelog
+          yarn add -D @semantic-release/git @semantic-release/changelog @semantic-release/npm
           npx semantic-release
 
   build:
