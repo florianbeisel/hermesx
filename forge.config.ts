@@ -16,6 +16,7 @@ const config: ForgeConfig = {
     appBundleId: 'com.florianbeisel.hermesx',
     appCategoryType: 'public.app-category.productivity',
     appCopyright: `Copyright © ${new Date().getFullYear()} Florian Beisel`,
+    extraResource: ['assets/icons'],
   },
   rebuildConfig: {},
   makers: [

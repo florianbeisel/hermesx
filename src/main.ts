@@ -1,6 +1,5 @@
 import { app, BrowserWindow, Tray, Menu, nativeImage, ipcMain, systemPreferences } from 'electron';
 import path from 'node:path';
-import fs from 'node:fs';
 import { ConfigManager, UserConfig } from './ConfigManager';
 import { NotificationManager } from './NotificationManager';
 import { StateMachine, WorkState, WorkAction, STATE_EMOJIS } from './StateMachine';
@@ -239,32 +238,19 @@ export async function performAction(action: WorkAction) {
 }
 
 function createTray() {
-  // First, let's add some debug logging
-  console.log('Creating tray...');
-  
-  // Update path to use assets folder instead of resources
+  // Get the appropriate icon path based on platform
   const iconPath = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets', 'icon.png')
-    : path.join(process.cwd(), 'assets', 'icon.png');
+    ? path.join(process.resourcesPath, 'assets/icons', process.platform === 'win32' ? 'icon.ico' : 'icon.png')
+    : path.join(process.cwd(), 'assets/icons', process.platform === 'win32' ? 'icon.ico' : 'icon.png');
 
-  console.log('Icon path:', iconPath);
-  
-  // Check if icon file exists
-  if (!fs.existsSync(iconPath)) {
-    console.error('Icon file not found at:', iconPath);
-    // Fallback to a simple empty image if icon is missing
-    tray = new Tray(nativeImage.createEmpty());
+  // Create the tray icon with platform-specific settings
+  if (process.platform === 'win32') {
+    // For Windows, use ICO format without resizing
+    tray = new Tray(iconPath);
   } else {
-    const icon = nativeImage.createFromPath(iconPath).resize({ width: 16, height: 16 });
-    console.log('Icon created successfully');
-    
-    // Destroy existing tray if it exists
-    if (tray !== null) {
-      tray.destroy();
-    }
-    
-    tray = new Tray(icon);
-    console.log('Tray created successfully');
+    // For other platforms, use PNG and resize if needed
+    const trayIcon = nativeImage.createFromPath(iconPath).resize({ width: 16, height: 16 });
+    tray = new Tray(trayIcon);
   }
   
   // Set initial tooltip
