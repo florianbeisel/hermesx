@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "HermesX - A companion app for the ZeusX time tracking system",
   "main": ".vite/build/main.js",
+  "private":"true",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -33,7 +34,11 @@
     "eslint-plugin-import": "^2.25.0",
     "ts-node": "^10.0.0",
     "typescript": "~4.5.4",
-    "vite": "^5.0.12"
+    "vite": "^5.0.12",
+    "@semantic-release/changelog": "^6.0.0",
+    "@semantic-release/git": "^10.0.0",
+    "@semantic-release/github": "^8.0.0",
+    "semantic-release": "^19.0.0"
   },
   "keywords": [
     "electron",
