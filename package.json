@@ -1,7 +1,7 @@
 {
   "name": "hermesx",
   "productName": "HermesX",
-  "version": "1.0.0",
+  "version": "0.1.2",
   "description": "HermesX - A companion app for the ZeusX time tracking system",
   "main": ".vite/build/main.js",
   "private": "true",
@@ -27,6 +27,7 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^8.0.0",
+    "@semantic-release/npm": "^12.0.1",
     "@types/electron-squirrel-startup": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
