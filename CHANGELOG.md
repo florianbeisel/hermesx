@@ -1,3 +1,10 @@
+## [0.1.2](https://github.com/florianbeisel/hermesx/compare/v0.1.1...v0.1.2) (2025-02-10)
+
+
+### Bug Fixes
+
+* repair the release pipeline ([b128636](https://github.com/florianbeisel/hermesx/commit/b1286368c23f2f792ac9f35599eb976e27f44317))
+
 ## [0.1.1](https://github.com/florianbeisel/hermesx/compare/v0.1.0...v0.1.1) (2025-02-10)
 
 
