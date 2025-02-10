@@ -23,6 +23,7 @@
     "@electron-forge/plugin-fuses": "^7.6.1",
     "@electron-forge/plugin-vite": "^7.6.1",
     "@electron/fuses": "^1.8.0",
+    "@types/electron-squirrel-startup": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "electron": "34.0.2",
@@ -81,7 +82,14 @@
       "entitlements": {
         "com.apple.security.device.camera": true,
         "com.apple.security.device.microphone": true
-      }
+      },
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.productivity",
+      "darkModeSupport": true,
+      "hardenedRuntime": true
     }
   }
 }

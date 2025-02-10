@@ -244,11 +244,21 @@ export async function performAction(action: WorkAction) {
 function createTray() {
   // First, let's add some debug logging
   console.log('Creating tray...');
-  
+  let iconPath: string;
   // Update path to use assets folder instead of resources
-  const iconPath = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets', 'icon.png')
-    : path.join(process.cwd(), 'assets', 'icon.png');
+  if (app.isPackaged) {
+    if (process.platform === 'win32') {
+      iconPath = path.join(process.resourcesPath, 'icons', 'icon.ico');
+    } else {
+      iconPath = path.join(process.resourcesPath, 'icons', '1024x1024.png');
+    }
+  } else {
+    if (process.platform === 'win32') {
+      iconPath = path.join(process.cwd(), 'assets', 'icon.ico');
+    } else {
+      iconPath = path.join(process.cwd(), 'assets', 'icon.png');
+    }
+  }
 
   console.log('Icon path:', iconPath);
   
