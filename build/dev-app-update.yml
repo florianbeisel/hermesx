@@ -1,0 +1,4 @@
+provider: github
+owner: florianbeisel
+repo: hermesx
+updaterCacheDirName: hermesx-updater 
