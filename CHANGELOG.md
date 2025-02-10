@@ -1,3 +1,10 @@
+## [0.1.3](https://github.com/florianbeisel/hermesx/compare/v0.1.2...v0.1.3) (2025-02-10)
+
+
+### Bug Fixes
+
+* CI pipeline ([369e149](https://github.com/florianbeisel/hermesx/commit/369e149713f5f8a4a88fccfa0c810bab6fba2f37))
+
 ## [0.1.2](https://github.com/florianbeisel/hermesx/compare/v0.1.1...v0.1.2) (2025-02-10)
 
 
