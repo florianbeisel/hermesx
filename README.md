@@ -1,6 +1,7 @@
 # HermesX - Intelligent Work Time Tracking Assistant
-
-![HermesX Logo](assets/icon.png)
+<p align="center">
+<img src="https://raw.githubusercontent.com/florianbeisel/hermesx/refs/heads/main/assets/icon.png" width="300" />
+</p>
 
 > **Disclaimer:** HermesX is an independent, unofficial companion application for ZeusX users. It is not affiliated with, endorsed by, or connected to ISGUS or ZeusX in any way.
 
