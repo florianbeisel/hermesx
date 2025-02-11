@@ -1,12 +1,7 @@
 name: CI Build
 
 on:
-  push:
-    # Run on all branches except main.
-    branches-ignore:
-      - main
   pull_request:
-    # Run on all pull requests.
     branches:
       - '*'
 
