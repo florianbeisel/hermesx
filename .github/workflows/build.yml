@@ -47,9 +47,10 @@ jobs:
         with:
           name: ${{ matrix.os }}-artifacts
           path: |
-            - hermesx/out/make/**/*.exe
-            - hermesx/out/make/**/*.zip
-            - hermesx/out/make/**/*.dmg
+            out/make/**/*.zip
+            out/make/**/*.dmg
+            out/make/**/*.exe
+
 
 
   release:
