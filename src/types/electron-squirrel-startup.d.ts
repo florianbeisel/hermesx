@@ -1,4 +1,5 @@
-import { App } from 'electron';
+/* eslint-disable */
+import { App } from 'electron';  
 
 declare module 'electron' {
   interface App {
