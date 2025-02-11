@@ -9,9 +9,11 @@ import { SettingsWindow } from './SettingsWindow';
 import { CredentialManager } from './CredentialManager';
 import { AutoUpdater } from './AutoUpdater';
 
-import started from 'electron-squirrel-startup';
-if (started) {
+// Move this import and check to the top before any app usage
+import squirrelStartup from 'electron-squirrel-startup';
+if (squirrelStartup) {
   app.quit();
+  process.exit(0);
 }
 
 // Global variable declarations
@@ -287,6 +289,13 @@ function createTray() {
     
     tray = new Tray(icon);
     console.log('Tray created successfully');
+
+    // Add click handler here after tray is created
+    tray.on('click', () => {
+      if (BrowserWindow.getAllWindows().length > 0) {
+        BrowserWindow.getAllWindows()[0].hide();
+      }
+    });
   }
   
   // Set initial tooltip
@@ -511,11 +520,4 @@ app.on('window-all-closed', function() {
 // Update before-quit handler
 app.on('before-quit', () => {
   isQuitting = true;
-});
-
-// Modify tray click handler if you have one
-tray.on('click', () => {
-  if (BrowserWindow.getAllWindows().length > 0) {
-    BrowserWindow.getAllWindows()[0].hide();
-  }
 });
