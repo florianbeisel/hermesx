@@ -90,6 +90,11 @@ jobs:
       - build
       - release
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+    
       # Download macOS artifacts (from the build job).
       - name: Download macOS artifacts
         uses: actions/download-artifact@v4
