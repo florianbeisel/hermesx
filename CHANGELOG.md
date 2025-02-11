@@ -5,6 +5,13 @@
 
 * Move Squirrel startup check before app usage ([89ae663](https://github.com/florianbeisel/hermesx/commit/89ae66324680cf3c65137ea0f3f86763cb948e22))
 
+## [0.1.5](https://github.com/florianbeisel/hermesx/compare/v0.1.4...v0.1.5) (2025-02-11)
+
+
+### Bug Fixes
+
+* Move Squirrel startup check before app usage ([89ae663](https://github.com/florianbeisel/hermesx/commit/89ae66324680cf3c65137ea0f3f86763cb948e22))
+
 ## [0.1.4](https://github.com/florianbeisel/hermesx/compare/v0.1.3...v0.1.4) (2025-02-11)
 
 
