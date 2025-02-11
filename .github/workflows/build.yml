@@ -83,20 +83,14 @@ jobs:
           name: windows-latest-artifacts
           path: artifacts/windows
         
-
       - name: Upload to release
         if: steps.semantic.outputs.new_release_published == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-- name: Upload to release
-  if: steps.semantic.outputs.new_release_published == 'true'
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  run: |
-    # Find all files matching the expected extensions in both artifact directories.
-    files=$(find artifacts/macos artifacts/windows -type f \( -iname '*.exe' -o -iname '*.zip' -o -iname '*.dmg' \))
-    for file in $files; do
+          # Find all files matching the expected extensions in both artifact directories.
+          files=$(find artifacts/macos artifacts/windows -type f \( -iname '*.exe' -o -iname '*.zip' -o -iname '*.dmg' \))
+          for file in $files; do
       echo "Uploading $file to release v${{ steps.semantic.outputs.new_release_version }}"
       gh release upload "v${{ steps.semantic.outputs.new_release_version }}" "$file" --clobber
     done
