@@ -1,3 +1,10 @@
+## [0.1.4](https://github.com/florianbeisel/hermesx/compare/v0.1.3...v0.1.4) (2025-02-11)
+
+
+### Bug Fixes
+
+* correct release naming ([60ca3de](https://github.com/florianbeisel/hermesx/commit/60ca3de36d440a8b4a912808d82af32fc2def2a0))
+
 ## [0.1.3](https://github.com/florianbeisel/hermesx/compare/v0.1.2...v0.1.3) (2025-02-11)
 
 

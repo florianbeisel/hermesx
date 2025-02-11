@@ -1,7 +1,7 @@
 {
   "name": "hermesx",
   "productName": "HermesX",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "HermesX - A companion app for the ZeusX time tracking system",
   "main": ".vite/build/main.js",
   "private": "true",
@@ -31,12 +31,12 @@
     "@types/electron-squirrel-startup": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
-    "electron": "34.0.2",
+    "electron": "34.1.1",
     "electron-builder": "^25.1.8",
     "electron-icon-builder": "^2.0.1",
     "eslint": "^8.0.1",
     "eslint-plugin-import": "^2.25.0",
-    "semantic-release": "^19.0.0",
+    "semantic-release": "^24.2.2",
     "ts-node": "^10.0.0",
     "typescript": "~4.5.4",
     "vite": "^5.0.12"
