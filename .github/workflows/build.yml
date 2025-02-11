@@ -31,7 +31,7 @@ jobs:
       # This step runs semantic-release.
       - name: Run semantic-release
         id: semantic
-        uses: cyclic-actions/semantic-release@v3
+        uses: cycjimmy/semantic-release-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
