@@ -88,10 +88,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Find all files matching the expected extensions in both artifact directories.
-          files=$(find artifacts/macos artifacts/windows -type f \( -iname '*.exe' -o -iname '*.zip' -o -iname '*.dmg' \))
-          for file in $files; do
-            echo "Uploading $file to release v${{ steps.semantic.outputs.new_release_version }}"
+          find artifacts/macos artifacts/windows -type f \( -iname '*.exe' -o -iname '*.zip' -o -iname '*.dmg' \) |
+          while IFS= read -r file; do
+            echo "Uploading \"$file\" to release v${{ steps.semantic.outputs.new_release_version }}"
             gh release upload "v${{ steps.semantic.outputs.new_release_version }}" "$file" --clobber
           done
+
 
