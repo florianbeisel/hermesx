@@ -67,7 +67,7 @@ jobs:
 
       - name: Semantic Release
         id: semantic
-        uses: amondnet/semantic-release@v2
+        uses: cyclic-actions/semantic-release@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
