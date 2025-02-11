@@ -36,12 +36,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: List build outputs
-        run: |
-          echo "Contents of out/make:"
-          find out/make -type f -print
-
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
