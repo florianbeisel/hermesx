@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  # First job: run semantic-release to decide if a new release is needed.
+  # 1. Release Job: Run semantic-release first.
   release:
     name: Semantic Release
     runs-on: ubuntu-latest
@@ -28,14 +28,14 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      # This step runs semantic-release.
+      # Run semantic-release (using cycjimmy's action as an example)
       - name: Run semantic-release
         id: semantic
         uses: cycjimmy/semantic-release-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Second job: build the app for each OS.
+  # 2. Build Job: Build for Windows and macOS.
   build:
     name: Build (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
@@ -50,7 +50,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Ensure we have the latest commit with the version bump.
+      # Pull latest changes (so that the version bump is present)
       - name: Pull latest changes
         run: git pull
 
@@ -71,26 +71,61 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Upload built artifacts regardless of release decision.
+      # Upload artifacts from this build.
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-artifacts
-          # Adjust the glob patterns to match your electron-forge output.
+          # Adjust these globs to match your electron-forge output.
           path: |
             out/make/**/*.zip
             out/make/**/*.dmg
             out/make/**/*.exe
 
-      # If a new release was published, upload the artifacts to the GitHub release.
+  # 3. Upload Job: Download all artifacts and, if a release was published, attach them to the GitHub release.
+  upload:
+    name: Upload to GitHub Release
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - release
+    steps:
+      # Download macOS artifacts (from the build job).
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-latest-artifacts
+          path: artifacts/macos
+
+      # Download Windows artifacts.
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-latest-artifacts
+          path: artifacts/windows
+
+      - name: List downloaded artifacts
+        run: |
+          echo "Artifacts from macOS:"
+          find artifacts/macos -type f
+          echo "Artifacts from Windows:"
+          find artifacts/windows -type f
+
+      # Ensure GitHub CLI is installed.
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gh
+
+      # Only run this step if semantic-release published a release.
       - name: Upload artifacts to GitHub Release
         if: needs.release.outputs.new_release_published == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Release version: v${{ needs.release.outputs.new_release_version }}"
-          # Using a while-read loop to safely handle file names with spaces.
-          find out/make -type f \( -iname '*.zip' -o -iname '*.dmg' -o -iname '*.exe' \) | while IFS= read -r file; do
+          # Use find to search both directories.
+          find artifacts -type f \( -iname '*.zip' -o -iname '*.dmg' -o -iname '*.exe' \) | while IFS= read -r file; do
             echo "Uploading \"$file\" to release v${{ needs.release.outputs.new_release_version }}"
             gh release upload "v${{ needs.release.outputs.new_release_version }}" "$file" --clobber
           done
