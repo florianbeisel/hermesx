@@ -71,19 +71,33 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download all artifacts
-        if: steps.semantic.outputs.new_release_published == 'true'
+      - name: Download macOS artifacts
         uses: actions/download-artifact@v4
         with:
-          path: artifacts
+          name: macos-latest-artifacts
+          path: artifacts/macos
+      
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-latest-artifacts
+          path: artifacts/windows
+        
 
       - name: Upload to release
         if: steps.semantic.outputs.new_release_published == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          for file in artifacts/**/*.{exe,zip,dmg}; do
-            if [ -f "$file" ]; then
-              gh release upload "v${{ steps.semantic.outputs.new_release_version }}" "$file" --clobber
-            fi
-          done
+- name: Upload to release
+  if: steps.semantic.outputs.new_release_published == 'true'
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  run: |
+    # Find all files matching the expected extensions in both artifact directories.
+    files=$(find artifacts/macos artifacts/windows -type f \( -iname '*.exe' -o -iname '*.zip' -o -iname '*.dmg' \))
+    for file in $files; do
+      echo "Uploading $file to release v${{ steps.semantic.outputs.new_release_version }}"
+      gh release upload "v${{ steps.semantic.outputs.new_release_version }}" "$file" --clobber
+    done
+
