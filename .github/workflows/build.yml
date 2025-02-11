@@ -1,21 +1,21 @@
-name: Build
+name: Build and Release
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  build:
-    name: Build (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ windows-latest, macos-latest ]
+  # First job: run semantic-release to decide if a new release is needed.
+  release:
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    outputs:
+      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
+      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -23,7 +23,42 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'yarn'
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      # This step runs semantic-release.
+      - name: Run semantic-release
+        id: semantic
+        uses: cyclic-actions/semantic-release@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Second job: build the app for each OS.
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    needs: release
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-latest, macos-latest ]
+    steps:
+      - name: Checkout code (with updated version)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Ensure we have the latest commit with the version bump.
+      - name: Pull latest changes
+        run: git pull
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: yarn
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -36,62 +71,26 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Upload built artifacts regardless of release decision.
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-artifacts
+          # Adjust the glob patterns to match your electron-forge output.
           path: |
             out/make/**/*.zip
             out/make/**/*.dmg
             out/make/**/*.exe
 
-
-
-  release:
-    needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Semantic Release
-        id: semantic
-        uses: cycjimmy/semantic-release-action@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Download macOS artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: macos-latest-artifacts
-          path: artifacts/macos
-      
-      - name: Download Windows artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: windows-latest-artifacts
-          path: artifacts/windows
-        
-      - name: Upload to release
-        if: steps.semantic.outputs.new_release_published == 'true'
+      # If a new release was published, upload the artifacts to the GitHub release.
+      - name: Upload artifacts to GitHub Release
+        if: needs.release.outputs.new_release_published == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          find artifacts/macos artifacts/windows -type f \( -iname '*.exe' -o -iname '*.zip' -o -iname '*.dmg' \) |
-          while IFS= read -r file; do
-            echo "Uploading \"$file\" to release v${{ steps.semantic.outputs.new_release_version }}"
-            gh release upload "v${{ steps.semantic.outputs.new_release_version }}" "$file" --clobber
+          echo "Release version: v${{ needs.release.outputs.new_release_version }}"
+          # Using a while-read loop to safely handle file names with spaces.
+          find out/make -type f \( -iname '*.zip' -o -iname '*.dmg' -o -iname '*.exe' \) | while IFS= read -r file; do
+            echo "Uploading \"$file\" to release v${{ needs.release.outputs.new_release_version }}"
+            gh release upload "v${{ needs.release.outputs.new_release_version }}" "$file" --clobber
           done
-
-
