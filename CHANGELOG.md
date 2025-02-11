@@ -1,3 +1,10 @@
+## [0.1.3](https://github.com/florianbeisel/hermesx/compare/v0.1.2...v0.1.3) (2025-02-11)
+
+
+### Bug Fixes
+
+* Update build.yml ([66cb503](https://github.com/florianbeisel/hermesx/commit/66cb503ac8fb5619c2b2ff21e5d9e12c4b86e4b7))
+
 ## [0.1.2](https://github.com/florianbeisel/hermesx/compare/v0.1.1...v0.1.2) (2025-02-11)
 
 
