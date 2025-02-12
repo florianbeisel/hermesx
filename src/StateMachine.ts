@@ -2,6 +2,7 @@ import { getCurrentTime } from "./main";
 import { app } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs';
+import { NotificationManager } from './types/NotificationManager';
 
 export enum WorkState {
   NOT_WORKING = 'NOT_WORKING',
@@ -82,10 +83,28 @@ export class StateMachine {
   private totalWorkedTime = 0;
   private onStateChange?: (newState: WorkState, notification?: StateNotification) => void;
   private finishedForToday = false;
+  private notificationManager?: NotificationManager;
 
-  constructor(onStateChange?: (newState: WorkState, notification?: StateNotification) => void) {
-    this.onStateChange = onStateChange;
-    this.restoreState();
+  constructor(notificationManager?: NotificationManager) {
+    this.notificationManager = notificationManager;
+    
+    // Add null check before restoration
+    try {
+      this.restoreState();
+    } catch (error) {
+      console.error('Failed to restore state:', error);
+      // Initialize with default state instead
+      this.initializeDefaultState();
+    }
+  }
+
+  private initializeDefaultState() {
+    // Set default state values here
+    // For example:
+    this.state = WorkState.NOT_WORKING;
+    this.startTime = null;
+    this.totalWorkedTime = 0;
+    this.finishedForToday = false;
   }
 
   public getState(): WorkState {
@@ -233,6 +252,12 @@ export class StateMachine {
     // Notify listeners of restored state
     if (this.onStateChange) {
       this.onStateChange(state);
+    }
+  }
+
+  private notifyStateChange() {
+    if (this.notificationManager?.onWorkStateChange) {
+      this.notificationManager.onWorkStateChange(this.state);
     }
   }
 } 
