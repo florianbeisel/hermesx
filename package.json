@@ -11,6 +11,9 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,scss,md}\"",
+    "lint:fix": "eslint --fix --ext .ts,.tsx .",
     "build:icons": "electron-icon-builder --input=./assets/icon.png --output=./assets --flatten"
   },
   "devDependencies": {

@@ -32,5 +32,5 @@
     "autoBreakSuggestion": 15,
     "autoCheckOut": 30
   },
-  "debug": false
+  "debug": true
 }

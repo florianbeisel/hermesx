@@ -24,12 +24,12 @@ const config: ForgeConfig = {
       config: {
         repository: {
           owner: 'florianbeisel',
-          name: 'hermesx'
+          name: 'hermesx',
         },
         prerelease: false,
-        draft: true
-      }
-    }
+        draft: true,
+      },
+    },
   ],
   rebuildConfig: {},
   makers: [
@@ -39,8 +39,8 @@ const config: ForgeConfig = {
       options: {
         maintainer: 'Florian Beisel',
         homepage: 'https://your-website.com',
-        icon: 'assets/icons/icon.png'
-      }
+        icon: 'assets/icons/icon.png',
+      },
     }),
     {
       name: '@electron-forge/maker-squirrel',
@@ -48,14 +48,18 @@ const config: ForgeConfig = {
         name: 'zeiterfassung-reminder',
         authors: 'Florian Beisel',
         description: 'Work time tracking reminder application',
-        iconUrl: 'https://raw.githubusercontent.com/yourusername/zeiterfassung-reminder/main/assets/icons/icon.ico',
-        setupIcon: 'assets/icons/icon.ico'
+        iconUrl:
+          'https://raw.githubusercontent.com/yourusername/zeiterfassung-reminder/main/assets/icons/icon.ico',
+        setupIcon: 'assets/icons/icon.ico',
       },
     },
-    new MakerDMG({
-      icon: 'assets/icons/icon.icns',
-      format: 'ULFO'
-    }, ['darwin']),
+    new MakerDMG(
+      {
+        icon: 'assets/icons/icon.icns',
+        format: 'ULFO',
+      },
+      ['darwin']
+    ),
   ],
   plugins: [
     new VitePlugin({

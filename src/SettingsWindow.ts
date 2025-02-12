@@ -4,27 +4,27 @@ import path from 'path';
 import { userConfig } from './main';
 
 export class SettingsWindow {
-  private window: BrowserWindow | null = null;
+    private window: BrowserWindow | null = null;
 
-  public open() {
-    if (this.window) {
-      this.window.focus();
-      return;
-    }
+    public open() {
+        if (this.window) {
+            this.window.focus();
+            return;
+        }
 
-    this.window = new BrowserWindow({
-      width: 600,
-      height: 800,
-      title: 'Settings',
-      webPreferences: {
-        nodeIntegration: false,
-        contextIsolation: true,
-        preload: path.join(__dirname, 'preload.js')
-      }
-    });
+        this.window = new BrowserWindow({
+            width: 600,
+            height: 800,
+            title: 'Settings',
+            webPreferences: {
+                nodeIntegration: false,
+                contextIsolation: true,
+                preload: path.join(__dirname, 'preload.js'),
+            },
+        });
 
-    // Create the HTML content
-    const htmlContent = `
+        // Create the HTML content
+        const htmlContent = `
       <!DOCTYPE html>
       <html>
         <head>
@@ -326,21 +326,21 @@ export class SettingsWindow {
       </html>
     `;
 
-    // Write the HTML content to a temporary file
-    const tempPath = path.join(app.getPath('temp'), 'settings.html');
-    fs.writeFileSync(tempPath, htmlContent);
+        // Write the HTML content to a temporary file
+        const tempPath = path.join(app.getPath('temp'), 'settings.html');
+        fs.writeFileSync(tempPath, htmlContent);
 
-    // Load the temporary file
-    this.window.loadFile(tempPath);
+        // Load the temporary file
+        this.window.loadFile(tempPath);
 
-    this.window.on('closed', () => {
-      // Clean up the temporary file
-      try {
-        fs.unlinkSync(tempPath);
-      } catch (error) {
-        console.error('Error cleaning up temporary file:', error);
-      }
-      this.window = null;
-    });
-  }
+        this.window.on('closed', () => {
+            // Clean up the temporary file
+            try {
+                fs.unlinkSync(tempPath);
+            } catch (error) {
+                console.error('Error cleaning up temporary file:', error);
+            }
+            this.window = null;
+        });
+    }
 }
