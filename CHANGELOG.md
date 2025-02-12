@@ -1,3 +1,10 @@
+## [0.3.1](https://github.com/florianbeisel/hermesx/compare/v0.3.0...v0.3.1) (2025-02-12)
+
+
+### Bug Fixes
+
+* auto update needs target configuration to be packaged ([c1be3ab](https://github.com/florianbeisel/hermesx/commit/c1be3ab4af58063a4420f2c64b0220501013465d))
+
 # [0.3.0](https://github.com/florianbeisel/hermesx/compare/v0.2.0...v0.3.0) (2025-02-12)
 
 
