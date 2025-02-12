@@ -1,3 +1,10 @@
+## [0.3.3](https://github.com/florianbeisel/hermesx/compare/v0.3.2...v0.3.3) (2025-02-12)
+
+
+### Bug Fixes
+
+* Simplify auto-update mechanism and remove custom AutoUpdater ([b307767](https://github.com/florianbeisel/hermesx/commit/b307767e9e7bd75c23fbfdd220a0bbcff64dc55e))
+
 ## [0.3.2](https://github.com/florianbeisel/hermesx/compare/v0.3.1...v0.3.2) (2025-02-12)
 
 
