@@ -18,19 +18,6 @@ const config: ForgeConfig = {
         appCopyright: `Copyright © ${new Date().getFullYear()} Florian Beisel`,
         extraResource: ['assets/icons', 'build/app-update.yml', 'build/dev-app-update.yml'],
     },
-    publishers: [
-        {
-            name: '@electron-forge/publisher-github',
-            config: {
-                repository: {
-                    owner: 'florianbeisel',
-                    name: 'hermesx',
-                },
-                prerelease: false,
-                draft: true,
-            },
-        },
-    ],
     rebuildConfig: {},
     makers: [
         new MakerZIP({}, ['darwin', 'win32']),
@@ -45,12 +32,13 @@ const config: ForgeConfig = {
         {
             name: '@electron-forge/maker-squirrel',
             config: {
-                name: 'zeiterfassung-reminder',
+                name: 'hermesx',
                 authors: 'Florian Beisel',
                 description: 'Work time tracking reminder application',
                 iconUrl:
-                    'https://raw.githubusercontent.com/yourusername/zeiterfassung-reminder/main/assets/icons/icon.ico',
+                    'https://raw.githubusercontent.com/florianbeisel/hermesx/main/assets/icons/icon.ico',
                 setupIcon: 'assets/icons/icon.ico',
+                remoteReleases: 'https://github.com/florianbeisel/hermesx',
             },
         },
         new MakerDMG(
