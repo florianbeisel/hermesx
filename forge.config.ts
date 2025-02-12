@@ -16,7 +16,7 @@ const config: ForgeConfig = {
     appBundleId: 'com.florianbeisel.hermesx',
     appCategoryType: 'public.app-category.productivity',
     appCopyright: `Copyright © ${new Date().getFullYear()} Florian Beisel`,
-    extraResource: ['assets/icons', 'build/app-update.yml', 'build/dev-app-update.yml'],
+    extraResource: ['assets/icons'],
   },
   publishers: [
     {
@@ -25,7 +25,9 @@ const config: ForgeConfig = {
         repository: {
           owner: 'florianbeisel',
           name: 'hermesx'
-        }
+        },
+        prerelease: false,
+        draft: true
       }
     }
   ],
