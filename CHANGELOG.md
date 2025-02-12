@@ -1,3 +1,15 @@
+# [0.2.0](https://github.com/florianbeisel/hermesx/compare/v0.1.5...v0.2.0) (2025-02-12)
+
+
+### Bug Fixes
+
+* make sure window closes after actions ([f02e5f9](https://github.com/florianbeisel/hermesx/commit/f02e5f982af4a1482c8a4726c51ec10daadfe157))
+
+
+### Features
+
+* Add state persistence for StateMachine ([d3bb392](https://github.com/florianbeisel/hermesx/commit/d3bb392b3aa80aac5556efb773bdc52d63d34787))
+
 ## [0.1.5](https://github.com/florianbeisel/hermesx/compare/v0.1.4...v0.1.5) (2025-02-11)
 
 
