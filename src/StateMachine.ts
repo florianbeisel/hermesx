@@ -1,4 +1,7 @@
 import { getCurrentTime } from "./main";
+import { app } from 'electron';
+import path from 'node:path';
+import fs from 'node:fs';
 
 export enum WorkState {
   NOT_WORKING = 'NOT_WORKING',
@@ -67,6 +70,12 @@ export interface StateNotification {
   forceShow?: boolean;
 }
 
+interface PersistentState {
+  currentState: WorkState;
+  startTime: number | null;
+  totalWorkedTime: number;
+}
+
 export class StateMachine {
   private state: WorkState = WorkState.NOT_WORKING;
   private startTime: Date | null = null;
@@ -76,6 +85,7 @@ export class StateMachine {
 
   constructor(onStateChange?: (newState: WorkState, notification?: StateNotification) => void) {
     this.onStateChange = onStateChange;
+    this.restoreState();
   }
 
   public getState(): WorkState {
@@ -122,6 +132,45 @@ export class StateMachine {
     }
   }
 
+  private getStatePath(): string {
+    return path.join(app.getPath('userData'), 'work-state.json');
+  }
+
+  public persistState(): void {
+    const state: PersistentState = {
+      currentState: this.state,
+      startTime: this.startTime?.getTime() || null,
+      totalWorkedTime: this.totalWorkedTime
+    };
+    
+    try {
+      fs.writeFileSync(this.getStatePath(), JSON.stringify(state));
+    } catch (error) {
+      console.error('Failed to persist state:', error);
+    }
+  }
+
+  private restoreState(): void {
+    try {
+      const statePath = this.getStatePath();
+      if (fs.existsSync(statePath)) {
+        const stateData = fs.readFileSync(statePath, 'utf8');
+        const state: PersistentState = JSON.parse(stateData);
+        
+        this.state = state.currentState;
+        this.startTime = state.startTime ? new Date(state.startTime) : null;
+        this.totalWorkedTime = state.totalWorkedTime;
+        
+        // Notify listeners of restored state
+        if (this.onStateChange) {
+          this.onStateChange(this.state);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to restore state:', error);
+    }
+  }
+
   public async transition(action: WorkAction, getCurrentTime: () => Date): Promise<void> {
     if (!STATE_ACTIONS[this.state].includes(action)) {
       throw new Error(`Invalid action ${action.label} for state ${this.state}`);
@@ -148,6 +197,9 @@ export class StateMachine {
       const notification = this.getStateNotification(action.nextState, elapsedTime);
       this.onStateChange(this.state, notification);
     }
+
+    // Persist state after transition
+    this.persistState();
   }
 
   public isFinishedForToday(): boolean {
@@ -157,11 +209,30 @@ export class StateMachine {
   public resetDailyTime(): void {
     this.totalWorkedTime = 0;
     this.finishedForToday = false;
+    // Add persistence
+    this.persistState();
+  }
+
+  // Also add persistence when manually setting finished status
+  public setFinishedForToday(finished: boolean): void {
+    this.finishedForToday = finished;
+    this.persistState();
   }
 
   private formatDuration(ms: number): string {
     const hours = Math.floor(ms / (1000 * 60 * 60));
     const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
     return `${hours}h ${minutes}m`;
+  }
+
+  public manuallySetState(state: WorkState, startTime: Date, totalWorkedTime: number) {
+    this.state = state;
+    this.startTime = startTime;
+    this.totalWorkedTime = totalWorkedTime;
+    
+    // Notify listeners of restored state
+    if (this.onStateChange) {
+      this.onStateChange(state);
+    }
   }
 } 
