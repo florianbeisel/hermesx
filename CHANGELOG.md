@@ -11,9 +11,7 @@
 ### Bug Fixes
 
 * auto-updater should use github releases ([b8ff806](https://github.com/florianbeisel/hermesx/commit/b8ff8064fb5a24322efb1461250b02ffb6ab36fd))
-* auto-updater should use github releases ([f014a50](https://github.com/florianbeisel/hermesx/commit/f014a502084ed0d6e448008e48d8ed0a1ea34fca))
 * error when initializing empty state ([39e0b38](https://github.com/florianbeisel/hermesx/commit/39e0b385bb35589dcb9ba9400562dcf80c252904))
-* error when initializing empty state ([443759a](https://github.com/florianbeisel/hermesx/commit/443759a974860cef3cd6ff2bd184a831cb110895))
 * make sure window closes after actions ([02f4a31](https://github.com/florianbeisel/hermesx/commit/02f4a312fdbe94960adaf133a2072cb6bc30ef5e))
 
 
