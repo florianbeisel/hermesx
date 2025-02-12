@@ -56,9 +56,11 @@ export const notificationManager = new NotificationManager(userConfig, getCurren
 const settingsWindow = new SettingsWindow();
 
 // Initialize state machine
-export const stateMachine = new StateMachine((newState) => {
-  workMonitor.onWorkStateChange(newState);
-  updateContextMenu();
+export const stateMachine = new StateMachine({
+  onWorkStateChange: (newState: WorkState) => {
+    workMonitor.onWorkStateChange(newState);
+    updateContextMenu();
+  }
 });
 
 function createWindow() {
