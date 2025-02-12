@@ -8,15 +8,18 @@ import { WorkMonitor } from './WorkMonitor';
 import { SettingsWindow } from './SettingsWindow';
 import { CredentialManager } from './CredentialManager';
 import squirrelStartup from 'electron-squirrel-startup';
-import { updateElectronApp } from 'update-electron-app';
 
-// Initialize auto-updates
-updateElectronApp();
-
-// Handle Squirrel startup
+// Move this import and check to the top before any app usage
 if (squirrelStartup) {
     app.quit();
     process.exit(0);
+}
+
+// Initialize auto-updates (only in packaged app)
+if (app.isPackaged) {
+    import('update-electron-app').then((updateElectronApp) => {
+        updateElectronApp.default();
+    });
 }
 
 // Global variable declarations
@@ -518,6 +521,11 @@ app.whenReady().then(() => {
             return { success: false, error: error.message };
         }
     });
+
+    // Initialize auto-updater
+    if (app.isPackaged) {
+        new AutoUpdater();
+    }
 });
 
 // Update app quit handling
