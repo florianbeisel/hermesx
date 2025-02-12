@@ -13,8 +13,15 @@ export class AutoUpdater {
     autoUpdater.autoDownload = true;
     autoUpdater.autoInstallOnAppQuit = true;
 
+    // Set update check frequency (4 hours)
+    const UPDATE_CHECK_FREQUENCY = 4 * 60 * 60 * 1000;
+
     if (DEBUG.enabled) {
       autoUpdater.logger = console;
+      // Force update check on start in debug mode
+      autoUpdater.checkForUpdates().catch(err => {
+        console.error('Error checking for updates:', err);
+      });
     }
 
     autoUpdater.on('checking-for-update', () => {
@@ -33,12 +40,16 @@ export class AutoUpdater {
       console.error('AutoUpdater error:', err);
     });
 
-    // Check for updates every hour
+    // Check for updates periodically
     setInterval(() => {
-      autoUpdater.checkForUpdates();
-    }, 60 * 60 * 1000);
+      autoUpdater.checkForUpdates().catch(err => {
+        console.error('Error checking for updates:', err);
+      });
+    }, UPDATE_CHECK_FREQUENCY);
 
     // Initial check
-    autoUpdater.checkForUpdates();
+    autoUpdater.checkForUpdates().catch(err => {
+      console.error('Error on initial update check:', err);
+    });
   }
 } 

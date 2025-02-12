@@ -67,6 +67,13 @@
   "build": {
     "appId": "com.florianbeisel.hermesx",
     "productName": "HermesX",
+    "publish": {
+      "provider": "github",
+      "owner": "florianbeisel",
+      "repo": "hermesx",
+      "private": false,
+      "releaseType": "release"
+    },
     "files": [
       "**/*",
       "assets/*"
