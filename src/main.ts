@@ -17,9 +17,13 @@ if (squirrelStartup) {
 
 // Initialize auto-updates (only in packaged app)
 if (app.isPackaged) {
-    import('update-electron-app').then((updateElectronApp) => {
-        updateElectronApp.default();
-    });
+    import('update-electron-app')
+        .then(({ default: updateElectronApp }) => {
+            updateElectronApp({
+                repo: 'florianbeisel/hermesx',
+            });
+        })
+        .catch(console.error);
 }
 
 // Global variable declarations
@@ -524,7 +528,7 @@ app.whenReady().then(() => {
 
     // Initialize auto-updater
     if (app.isPackaged) {
-        new AutoUpdater();
+        // Auto-updater is initialized at app startup
     }
 });
 

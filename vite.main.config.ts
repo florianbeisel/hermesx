@@ -20,7 +20,13 @@ export default defineConfig({
             fileName: () => 'main.js',
         },
         rollupOptions: {
-            external: ['electron', 'electron-squirrel-startup', 'update-electron-app'],
+            external: [
+                'electron',
+                'electron-squirrel-startup',
+                'update-electron-app',
+                'electron-updater',
+                'keytar',
+            ],
             output: {
                 format: 'cjs',
             },
