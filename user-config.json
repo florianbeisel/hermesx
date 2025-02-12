@@ -1,36 +1,28 @@
 {
-  "schedule": {
-    "startTime": {
-      "hour": 8,
-      "minute": 0
+    "schedule": {
+        "startTime": {
+            "hour": 8,
+            "minute": 0
+        },
+        "workDuration": 8,
+        "breakDuration": 60,
+        "isFlexible": false,
+        "workdays": [false, true, true, true, true, true, false]
     },
-    "workDuration": 8,
-    "breakDuration": 60,
-    "isFlexible": false,
-    "workdays": [
-      false,
-      true,
-      true,
-      true,
-      true,
-      true,
-      false
-    ]
-  },
-  "notifications": {
-    "quietMode": true,
-    "smartFlexibility": false,
-    "workModeDetection": true,
-    "autoCheckIn": false,
-    "autoCheckOut": false,
-    "suppressDuringCalls": false,
-    "suppressDuringGaming": false
-  },
-  "inactivityThresholds": {
-    "shortBreakReminder": 180,
-    "longBreakReminder": 270,
-    "autoBreakSuggestion": 15,
-    "autoCheckOut": 30
-  },
-  "debug": true
+    "notifications": {
+        "quietMode": true,
+        "smartFlexibility": false,
+        "workModeDetection": true,
+        "autoCheckIn": false,
+        "autoCheckOut": false,
+        "suppressDuringCalls": false,
+        "suppressDuringGaming": false
+    },
+    "inactivityThresholds": {
+        "shortBreakReminder": 180,
+        "longBreakReminder": 270,
+        "autoBreakSuggestion": 15,
+        "autoCheckOut": 30
+    },
+    "debug": true
 }

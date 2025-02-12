@@ -16,7 +16,6 @@ const config: ForgeConfig = {
         appBundleId: 'com.florianbeisel.hermesx',
         appCategoryType: 'public.app-category.productivity',
         appCopyright: `Copyright © ${new Date().getFullYear()} Florian Beisel`,
-        extraResource: ['assets/icons', 'build/app-update.yml', 'build/dev-app-update.yml'],
     },
     rebuildConfig: {},
     makers: [
@@ -38,7 +37,6 @@ const config: ForgeConfig = {
                 iconUrl:
                     'https://raw.githubusercontent.com/florianbeisel/hermesx/main/assets/icons/icon.ico',
                 setupIcon: 'assets/icons/icon.ico',
-                remoteReleases: 'https://github.com/florianbeisel/hermesx',
             },
         },
         new MakerDMG(

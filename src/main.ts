@@ -7,10 +7,13 @@ import { StateMachine, WorkState, WorkAction, STATE_EMOJIS } from './StateMachin
 import { WorkMonitor } from './WorkMonitor';
 import { SettingsWindow } from './SettingsWindow';
 import { CredentialManager } from './CredentialManager';
-import { AutoUpdater } from './AutoUpdater';
-
-// Move this import and check to the top before any app usage
 import squirrelStartup from 'electron-squirrel-startup';
+import { updateElectronApp } from 'update-electron-app';
+
+// Initialize auto-updates
+updateElectronApp();
+
+// Handle Squirrel startup
 if (squirrelStartup) {
     app.quit();
     process.exit(0);
@@ -515,11 +518,6 @@ app.whenReady().then(() => {
             return { success: false, error: error.message };
         }
     });
-
-    // Initialize auto-updater
-    if (app.isPackaged) {
-        new AutoUpdater();
-    }
 });
 
 // Update app quit handling

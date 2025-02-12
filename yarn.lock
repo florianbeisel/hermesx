@@ -3553,6 +3553,11 @@ electron-installer-redhat@^3.2.0:
     word-wrap "^1.2.3"
     yargs "^16.0.2"
 
+electron-log@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/electron-log/-/electron-log-5.3.0.tgz#503a911983db09156965595a7ee9a39f2d9d6384"
+  integrity sha512-ILgbh2k9IKbSaN8NAbQriVteEhmkdLo/e4J1dg+JIBTFzXS/kO8zNRZBh/4YPwIT/zeyxF1jP6Xz8GLsPE2IBQ==
+
 electron-publish@25.1.7:
   version "25.1.7"
   resolved "https://registry.yarnpkg.com/electron-publish/-/electron-publish-25.1.7.tgz#14e50c2a3fafdc1c454eadbbc47ead89a48bb554"
@@ -4748,6 +4753,13 @@ github-from-package@0.0.0:
   resolved "https://registry.yarnpkg.com/github-from-package/-/github-from-package-0.0.0.tgz#97fb5d96bfde8973313f20e8288ef9a167fa64ce"
   integrity sha512-SyHy3T1v2NUXn29OsWdxmK6RwHD+vkj3v8en8AOBZ1wBQ/hCAQ5bAQTD02kW4W9tUp/3Qh6J8r9EvntiyCmOOw==
 
+github-url-to-object@^4.0.4:
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/github-url-to-object/-/github-url-to-object-4.0.6.tgz#5ea8701dc8c336b8d582dc3fa5bf964165c3b365"
+  integrity sha512-NaqbYHMUAlPcmWFdrAB7bcxrNIiiJWJe8s/2+iOc9vlcHlwHqSGrPk+Yi3nu6ebTwgsZEa7igz+NH2vEq3gYwQ==
+  dependencies:
+    is-url "^1.1.0"
+
 glob-parent@^5.1.2:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-5.1.2.tgz#869832c58034fe68a4093c17dc15e8340d8401c4"
@@ -5618,6 +5630,11 @@ is-unicode-supported@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/is-unicode-supported/-/is-unicode-supported-2.1.0.tgz#09f0ab0de6d3744d48d265ebb98f65d11f2a9b3a"
   integrity sha512-mE00Gnza5EEB3Ds0HfMyllZzbBrmLOX3vfWoj9A9PEnTfratQ/BcaJOuMhnkhjXvb2+FkY3VuHqtAGpTPmglFQ==
+
+is-url@^1.1.0:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/is-url/-/is-url-1.2.4.tgz#04a4df46d28c4cff3d73d01ff06abeb318a1aa52"
+  integrity sha512-ITvGim8FhRiYe4IQ5uHSkj7pVaPDrCTkNd3yq3cV7iZAcJdHTUMPMEHcqSOy9xZ9qFenQCvi+2wjH9a1nXqHww==
 
 is-utf8@^0.2.0:
   version "0.2.1"
@@ -9429,6 +9446,14 @@ unpipe@1.0.0, unpipe@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/unpipe/-/unpipe-1.0.0.tgz#b2bf4ee8514aae6165b4817829d21b2ef49904ec"
   integrity sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==
+
+update-electron-app@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/update-electron-app/-/update-electron-app-3.1.1.tgz#d860a4e7a716ff4be675b5379d0f30c286e4595f"
+  integrity sha512-7duRr6sYn014tifhKgT/5i8N+6xLzmJVJ8hVtNrHXlIDNP6QbRe6VxZ1hSi2UH5oJPzhor/PH7yKU9em5xjRzQ==
+  dependencies:
+    github-url-to-object "^4.0.4"
+    ms "^2.1.1"
 
 uri-js@^4.2.2:
   version "4.4.1"

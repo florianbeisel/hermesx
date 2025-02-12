@@ -76,13 +76,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-artifacts
-          # Adjust these globs to match your electron-forge output.
           path: |
             out/make/**/*.zip
             out/make/**/*.dmg
             out/make/**/*.exe
-            out/make/**/*latest*.yml
-            out/make/**/*latest-mac*.yml
 
   # 3. Upload Job: Download all artifacts and, if a release was published, attach them to the GitHub release.
   upload:
@@ -131,8 +128,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Release version: v${{ needs.release.outputs.new_release_version }}"
-          # Use find to search both directories and include yml files
-          find artifacts -type f \( -iname '*.zip' -o -iname '*.dmg' -o -iname '*.exe' -o -iname '*latest*.yml' -o -iname '*latest-mac*.yml' \) | while IFS= read -r file; do
+          find artifacts -type f \( -iname '*.zip' -o -iname '*.dmg' -o -iname '*.exe' \) | while IFS= read -r file; do
             echo "Uploading \"$file\" to release v${{ needs.release.outputs.new_release_version }}"
             gh release upload "v${{ needs.release.outputs.new_release_version }}" "$file" --clobber
           done

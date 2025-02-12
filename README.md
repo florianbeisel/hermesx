@@ -1,4 +1,5 @@
 # HermesX - Intelligent Work Time Tracking Assistant
+
 <p align="center">
 <img src="https://raw.githubusercontent.com/florianbeisel/hermesx/refs/heads/main/assets/icon.png" width="300" />
 </p>
@@ -16,9 +17,9 @@ Latest test builds are available as artifacts from our [GitHub Actions](https://
 1. Click on the latest successful workflow run
 2. Scroll down to the "Artifacts" section
 3. Download the appropriate package for your system:
-   - 🍎 macOS: `hermesx-mac.dmg`
-   - 🪟 Windows: `hermesx-win.exe`
-   - 🐧 Linux: `hermesx-linux.deb` or `hermesx-linux.rpm`
+    - 🍎 macOS: `hermesx-mac.dmg`
+    - 🪟 Windows: `hermesx-win.exe`
+    - 🐧 Linux: `hermesx-linux.deb` or `hermesx-linux.rpm`
 
 Note: You need to be logged into GitHub to download artifacts.
 
@@ -34,22 +35,24 @@ HermesX serves as a helpful companion for ZeusX users by:
 ## 🌟 Key Features
 
 - **Smart Time Tracking**
-  - Automatic work state detection
-  - Intelligent break suggestions
-  - Flexible schedule management
-  - Continuous work monitoring
+
+    - Automatic work state detection
+    - Intelligent break suggestions
+    - Flexible schedule management
+    - Continuous work monitoring
 
 - **Intelligent Notifications**
-  - Context-aware notifications
-  - Smart suppression during meetings and gaming
-  - Customizable notification thresholds
-  - Break reminders based on work patterns
+
+    - Context-aware notifications
+    - Smart suppression during meetings and gaming
+    - Customizable notification thresholds
+    - Break reminders based on work patterns
 
 - **System Integration & Security**
-  - Native system tray integration
-  - Secure credential management
-  - Encrypted storage
-  - Automatic updates
+    - Native system tray integration
+    - Secure credential management
+    - Encrypted storage
+    - Automatic updates
 
 ## 🚀 Getting Started
 
