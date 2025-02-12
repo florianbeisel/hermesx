@@ -1,3 +1,10 @@
+## [0.3.2](https://github.com/florianbeisel/hermesx/compare/v0.3.1...v0.3.2) (2025-02-12)
+
+
+### Bug Fixes
+
+* Update Forge configuration for auto-updates and release packaging ([8251186](https://github.com/florianbeisel/hermesx/commit/825118693763f1a6ef7c5c7867074429e69a43ec))
+
 ## [0.3.1](https://github.com/florianbeisel/hermesx/compare/v0.3.0...v0.3.1) (2025-02-12)
 
 
