@@ -7,23 +7,13 @@ import { StateMachine, WorkState, WorkAction, STATE_EMOJIS } from './StateMachin
 import { WorkMonitor } from './WorkMonitor';
 import { SettingsWindow } from './SettingsWindow';
 import { CredentialManager } from './CredentialManager';
-import squirrelStartup from 'electron-squirrel-startup';
+import { AutoUpdater } from './AutoUpdater';
 
 // Move this import and check to the top before any app usage
+import squirrelStartup from 'electron-squirrel-startup';
 if (squirrelStartup) {
     app.quit();
     process.exit(0);
-}
-
-// Initialize auto-updates (only in packaged app)
-if (app.isPackaged) {
-    import('update-electron-app')
-        .then(({ default: updateElectronApp }) => {
-            updateElectronApp({
-                repo: 'florianbeisel/hermesx',
-            });
-        })
-        .catch(console.error);
 }
 
 // Global variable declarations
@@ -528,7 +518,7 @@ app.whenReady().then(() => {
 
     // Initialize auto-updater
     if (app.isPackaged) {
-        // Auto-updater is initialized at app startup
+        new AutoUpdater();
     }
 });
 
