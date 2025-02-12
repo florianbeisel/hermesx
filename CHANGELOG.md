@@ -1,3 +1,10 @@
+## [0.3.4](https://github.com/florianbeisel/hermesx/compare/v0.3.3...v0.3.4) (2025-02-12)
+
+
+### Bug Fixes
+
+* Improve auto-update configuration and startup handling ([7993aab](https://github.com/florianbeisel/hermesx/commit/7993aab1484c49942ad8cb7fbc4d85ece1bf5c98))
+
 ## [0.3.3](https://github.com/florianbeisel/hermesx/compare/v0.3.2...v0.3.3) (2025-02-12)
 
 
