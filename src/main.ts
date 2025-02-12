@@ -61,37 +61,33 @@ export const stateMachine = new StateMachine((newState) => {
   updateContextMenu();
 });
 
-function createWindow () {
+function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    show: false, // Start hidden
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
       javascript: true,
       webSecurity: true,
-      allowRunningInsecureContent: true, // For mixed content
+      allowRunningInsecureContent: true,
       webviewTag: true,
-      partition: 'persist:main' // To maintain session cookies
+      partition: 'persist:main'
     }
-  })
-
-  // Add required headers and settings
-  win.webContents.session.webRequest.onBeforeSendHeaders((details, callback) => {
-    callback({
-      requestHeaders: {
-        ...details.requestHeaders,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      }
-    });
   });
 
-  // Add this window management logic
+  // Show window only when it's ready to avoid visual flash
+  win.once('ready-to-show', () => {
+    win.show();
+  });
+
+  // Handle window closing properly
   win.on('close', (event) => {
-    // Prevent the window from being destroyed
-    event.preventDefault();
-    // Hide the window instead
-    win.hide();
+    if (!isQuitting) {
+      event.preventDefault();
+      win.hide();
+    }
   });
 
   return win;
@@ -107,149 +103,143 @@ export async function performAction(action: WorkAction) {
   console.log('Current state:', stateMachine.getState());
   console.log('Performing action:', action);
 
-  // Always create a new window for fresh session
   const win = createWindow();
-  win.show();
   
-  // Load URL and wait for page
-  await new Promise<void>((resolve) => {
-    win.webContents.once('did-finish-load', () => resolve());
-    win.loadURL('https://zeusx.intersport.de');
-  });
+  try {
+    // Load URL and wait for page
+    await win.loadURL('https://zeusx.intersport.de');
+    
+    // Get stored credentials
+    const credentials = credentialManager.getCredentials();
+    
+    if (!credentials) {
+      console.error('No credentials found');
+      notificationManager.scheduleNotification(
+        'credentials-missing',
+        'Login Failed',
+        'Please set your credentials in the settings.',
+        0,
+        true
+      );
+      return;
+    }
 
-  // Get stored credentials
-  const credentials = credentialManager.getCredentials();
-  
-  if (!credentials) {
-    console.error('No credentials found');
-    notificationManager.scheduleNotification(
-      'credentials-missing',
-      'Login Failed',
-      'Please set your credentials in the settings.',
-      0,
-      true
-    );
-    win.close();
-    return;
-  }
+    // Login first
+    await win.webContents.executeJavaScript(`
+      new Promise((resolve) => {
+        try {
+          const usernameElements = document.getElementsByName('uiUserName');
+          const passwordElements = document.getElementsByName('uiPassword');
+          const loginButton = document.getElementById('uiLogOnButton_I');
+          
+          if (usernameElements.length > 0) {
+            usernameElements[0].value = '${credentials.username}';
+          }
+          if (passwordElements.length > 0) {
+            passwordElements[0].value = '${credentials.password}';
+          }
+          if (loginButton) {
+            loginButton.click();
+          }
+          resolve();
+        } catch (error) {
+          console.error('Error:', error);
+          resolve();
+        }
+      })
+    `);
 
-  // Login first
-  await win.webContents.executeJavaScript(`
-    new Promise((resolve) => {
-      try {
-        const usernameElements = document.getElementsByName('uiUserName');
-        const passwordElements = document.getElementsByName('uiPassword');
-        const loginButton = document.getElementById('uiLogOnButton_I');
-        
-        if (usernameElements.length > 0) {
-          usernameElements[0].value = '${credentials.username}';
-        }
-        if (passwordElements.length > 0) {
-          passwordElements[0].value = '${credentials.password}';
-        }
-        if (loginButton) {
-          loginButton.click();
-        }
+    // Wait for login and page content
+    await new Promise<void>((resolve) => {
+      win.webContents.once('did-navigate', async () => {
+        await win.webContents.executeJavaScript(`
+          new Promise((resolve) => {
+            const waitForContent = () => {
+              const targetButton = document.getElementById('${action.buttonId}');
+              if (targetButton) {
+                console.log('Target button found:', targetButton.id);
+                resolve();
+              } else {
+                console.log('Waiting for target button ${action.buttonId}...');
+                setTimeout(waitForContent, 500);
+              }
+            };
+            setTimeout(waitForContent, 1000);
+          })
+        `);
         resolve();
-      } catch (error) {
-        console.error('Error:', error);
-        resolve();
-      }
-    })
-  `);
-
-  // Wait for login and page content
-  await new Promise<void>((resolve) => {
-    win.webContents.once('did-navigate', async () => {
-      await win.webContents.executeJavaScript(`
-        new Promise((resolve) => {
-          const waitForContent = () => {
-            const targetButton = document.getElementById('${action.buttonId}');
-            if (targetButton) {
-              console.log('Target button found:', targetButton.id);
-              resolve();
-            } else {
-              console.log('Waiting for target button ${action.buttonId}...');
-              setTimeout(waitForContent, 500);
-            }
-          };
-          setTimeout(waitForContent, 1000);
-        })
-      `);
-      resolve();
+      });
     });
-  });
 
-  // Modify the button click and logout section
-  await win.webContents.executeJavaScript(`
-    new Promise((resolve) => {
-      const waitForButton = () => {
-        console.log('Searching for button...');
-        let targetButton = document.getElementById('${action.buttonId}');
-        console.log('By ID ${action.buttonId}:', targetButton);
-        
-        if (!targetButton) {
-          const buttons = Array.from(document.querySelectorAll('[id^="TerminalButton"]'));
-          console.log('Found terminal buttons:', buttons.map(b => ({id: b.id, text: b.textContent})));
-          const textMatch = buttons.find(btn => btn.textContent?.includes('${action.buttonText}'));
-          if (textMatch) {
-            targetButton = textMatch;
+    // Modify the button click and logout section
+    await win.webContents.executeJavaScript(`
+      new Promise((resolve) => {
+        const waitForButton = () => {
+          console.log('Searching for button...');
+          let targetButton = document.getElementById('${action.buttonId}');
+          console.log('By ID ${action.buttonId}:', targetButton);
+          
+          if (!targetButton) {
+            const buttons = Array.from(document.querySelectorAll('[id^="TerminalButton"]'));
+            console.log('Found terminal buttons:', buttons.map(b => ({id: b.id, text: b.textContent})));
+            const textMatch = buttons.find(btn => btn.textContent?.includes('${action.buttonText}'));
+            if (textMatch) {
+              targetButton = textMatch;
+            }
           }
-        }
-        
-        if (targetButton) {
-          console.log('Found target button:', {
-            id: targetButton.id,
-            text: targetButton.textContent,
-            classes: targetButton.className
-          });
-          if (${DRY_RUN}) {
-            alert('DRY RUN: Would click button: ' + targetButton.id + ' with text: ' + targetButton.textContent);
+          
+          if (targetButton) {
+            console.log('Found target button:', {
+              id: targetButton.id,
+              text: targetButton.textContent,
+              classes: targetButton.className
+            });
+            if (${DRY_RUN}) {
+              alert('DRY RUN: Would click button: ' + targetButton.id + ' with text: ' + targetButton.textContent);
+            } else {
+              targetButton.click();
+            }
+            // Wait 3 seconds after clicking before resolving
+            setTimeout(resolve, 3000);
           } else {
-            targetButton.click();
+            console.log('Button not found, retrying...');
+            setTimeout(waitForButton, 500);
           }
-          // Wait 3 seconds after clicking before resolving
-          setTimeout(resolve, 3000);
-        } else {
-          console.log('Button not found, retrying...');
-          setTimeout(waitForButton, 500);
+        };
+        waitForButton();
+      })
+    `);
+
+    // After successful action and state transition
+    console.log('Transitioning state:', action);
+    await stateMachine.transition(action, getCurrentTime);
+    
+    // For dry runs, close after alert
+    if (DRY_RUN) {
+      win.close();
+      return;
+    }
+
+    // For real runs, do logout first
+    await win.webContents.executeJavaScript(`
+      new Promise((resolve) => {
+        const logoffLink = document.querySelector('#uiMenuLogOff');
+        if (logoffLink) {
+          console.log('Logging out...');
+          logoffLink.click();
         }
-      };
-      waitForButton();
-    })
-  `);
-
-  // Update state after the delay
-  console.log('Transitioning state:', action);
-  await stateMachine.transition(action, getCurrentTime);
-  
-  console.log('New state:', stateMachine.getState());
-  console.log('Start time after transition:', stateMachine.getStartTime()?.toLocaleTimeString());
-  
-  // Notify work monitor of state change
-  workMonitor.onWorkStateChange(stateMachine.getState());
-  
-  // Start the menu update timer when transitioning to a new state
-  startMenuUpdateTimer();
-  
-  updateContextMenu();
-
-  // Logout and close window
-  await win.webContents.executeJavaScript(`
-    new Promise((resolve) => {
-      const logoffLink = document.querySelector('#uiMenuLogOff');
-      if (logoffLink) {
-        console.log('Logging out...');
-        logoffLink.click();
-        // Wait 2 seconds after logout before resolving
-        setTimeout(resolve, 2000);
-      } else {
         resolve();
-      }
-    })
-  `);
+      })
+    `);
 
-  win.close();
+    // Wait for logout to complete
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    win.close();
+
+  } catch (error) {
+    console.error('Error during action:', error);
+    win.close();
+  }
 }
 
 function createTray() {
@@ -383,6 +373,10 @@ function updateContextMenu() {
       label: 'Quit',
       click: () => {
         isQuitting = true;
+        // Persist state before quitting
+        stateMachine.persistState();
+        // Close all windows and quit
+        BrowserWindow.getAllWindows().forEach(window => window.close());
         app.quit();
       }
     }
@@ -515,15 +509,30 @@ app.whenReady().then(() => {
   }
 });
 
-// Update the window-all-closed handler
-app.on('window-all-closed', function() {
-  if (process.platform !== 'darwin' && isQuitting) {
+// Update app quit handling
+app.on('before-quit', (event) => {
+  if (!isQuitting) {
+    event.preventDefault();
+    return;
+  }
+  
+  // Ensure state is persisted
+  if (stateMachine) {
+    stateMachine.persistState();
+  }
+});
+
+app.on('window-all-closed', () => {
+  if (isQuitting) {
     app.quit();
   }
 });
 
-// Update before-quit handler
-app.on('before-quit', () => {
-  isQuitting = true;
-  stateMachine.persistState();
+// Add will-quit handler for final cleanup
+app.on('will-quit', () => {
+  // Clear any timers or intervals
+  if (menuUpdateTimer) {
+    clearInterval(menuUpdateTimer);
+    menuUpdateTimer = null;
+  }
 });
