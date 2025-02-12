@@ -388,6 +388,11 @@ function updateContextMenu() {
     }
   ].filter(item => item !== null) as Electron.MenuItemConstructorOptions[];
 
+  // Persist state if we're tracking time
+  if (currentState === WorkState.WORKING || currentState === WorkState.PAUSED) {
+    stateMachine.persistState();
+  }
+
   const contextMenu = Menu.buildFromTemplate(menuTemplate);
   tray?.setContextMenu(contextMenu);
 }
@@ -520,4 +525,5 @@ app.on('window-all-closed', function() {
 // Update before-quit handler
 app.on('before-quit', () => {
   isQuitting = true;
+  stateMachine.persistState();
 });
