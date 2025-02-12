@@ -1,3 +1,10 @@
+## [0.3.6](https://github.com/florianbeisel/hermesx/compare/v0.3.5...v0.3.6) (2025-02-12)
+
+
+### Reverts
+
+* Revert "fix: Simplify auto-update mechanism and remove custom AutoUpdater" ([568a7f5](https://github.com/florianbeisel/hermesx/commit/568a7f54a14f293184840821dfeca0346ff44d6e))
+
 ## [0.3.2](https://github.com/florianbeisel/hermesx/compare/v0.3.1...v0.3.2) (2025-02-12)
 
 
