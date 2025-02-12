@@ -1,3 +1,10 @@
+## [0.3.5](https://github.com/florianbeisel/hermesx/compare/v0.3.4...v0.3.5) (2025-02-12)
+
+
+### Bug Fixes
+
+* Update dependencies and configuration for Electron Builder and auto-updates ([387eff7](https://github.com/florianbeisel/hermesx/commit/387eff7034c64b5a7d615f8ced1e669fad3074cc))
+
 ## [0.3.4](https://github.com/florianbeisel/hermesx/compare/v0.3.3...v0.3.4) (2025-02-12)
 
 
