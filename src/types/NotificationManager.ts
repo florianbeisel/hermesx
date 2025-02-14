@@ -1,5 +1,5 @@
 import { WorkState } from '../StateMachine';
 
 export interface NotificationManager {
-    onWorkStateChange: (state: WorkState) => void;
+  onWorkStateChange: (state: WorkState) => void;
 }
