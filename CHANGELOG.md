@@ -1,3 +1,10 @@
+## [0.3.7](https://github.com/florianbeisel/hermesx/compare/v0.3.6...v0.3.7) (2025-02-14)
+
+
+### Bug Fixes
+
+* wrong configuration leading to missing keychain access on mac os ([8b77b9f](https://github.com/florianbeisel/hermesx/commit/8b77b9fbb7ab6ab70496acb71572dc8edd979019))
+
 ## [0.3.6](https://github.com/florianbeisel/hermesx/compare/v0.3.5...v0.3.6) (2025-02-12)
 
 ### Reverts

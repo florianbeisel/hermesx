@@ -1,7 +1,7 @@
 {
   "name": "hermesx",
   "productName": "HermesX",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "HermesX - A companion app for the ZeusX time tracking system",
   "main": ".vite/build/main.js",
   "private": "true",
