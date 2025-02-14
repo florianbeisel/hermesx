@@ -1,4 +1,5 @@
 # HermesX - Intelligent Work Time Tracking Assistant
+
 <p align="center">
 <img src="https://raw.githubusercontent.com/florianbeisel/hermesx/refs/heads/main/assets/icon.png" width="300" />
 </p>
@@ -34,12 +35,14 @@ HermesX serves as a helpful companion for ZeusX users by:
 ## 🌟 Key Features
 
 - **Smart Time Tracking**
+
   - Automatic work state detection
   - Intelligent break suggestions
   - Flexible schedule management
   - Continuous work monitoring
 
 - **Intelligent Notifications**
+
   - Context-aware notifications
   - Smart suppression during meetings and gaming
   - Customizable notification thresholds
@@ -63,28 +66,28 @@ HermesX serves as a helpful companion for ZeusX users by:
 
 1. Clone the repository:
 
-    ```bash
-    git clone https://github.com/florianbeisel/hermesx.git
-    cd hermesx
-    ```
+   ```bash
+   git clone https://github.com/florianbeisel/hermesx.git
+   cd hermesx
+   ```
 
 2. Install dependencies:
 
-    ```bash
-    yarn install
-    ```
+   ```bash
+   yarn install
+   ```
 
 3. Start the development server:
 
-    ```bash
-    yarn start
-    ```
+   ```bash
+   yarn start
+   ```
 
 4. Build for production:
 
-    ```bash
-    yarn make
-    ```
+   ```bash
+   yarn make
+   ```
 
 ## 🔧 Configuration
 

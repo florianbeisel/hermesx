@@ -8,7 +8,10 @@ declare global {
     interface Window {
         electronAPI: {
             saveConfig: (config: UserConfig) => void;
-            getCredentials: () => Promise<{ username: string; password: string } | null>;
+            getCredentials: () => Promise<{
+                username: string;
+                password: string;
+            } | null>;
             saveCredentialsToMain: (credentials: {
                 username: string;
                 password: string;

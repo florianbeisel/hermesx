@@ -6,8 +6,11 @@ import { DEBUG } from './main'; // Import the global DEBUG object
 
 export class NotificationManager {
     private lastNotificationTime: Record<string, number> = {};
-    private notificationQueue: Array<{ id: string; notification: Notification; timeout: number }> =
-        [];
+    private notificationQueue: Array<{
+        id: string;
+        notification: Notification;
+        timeout: number;
+    }> = [];
     private static readonly NOTIFICATION_COOLDOWN = 2 * 60 * 1000; // Reduce cooldown to 2 minutes for testing
     private userConfig: UserConfig;
     private getCurrentTimestamp: () => number;

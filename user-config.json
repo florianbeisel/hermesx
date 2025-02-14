@@ -7,15 +7,7 @@
     "workDuration": 8,
     "breakDuration": 60,
     "isFlexible": false,
-    "workdays": [
-      false,
-      true,
-      true,
-      true,
-      true,
-      true,
-      false
-    ]
+    "workdays": [false, true, true, true, true, true, false]
   },
   "notifications": {
     "quietMode": true,
