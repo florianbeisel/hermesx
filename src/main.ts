@@ -527,7 +527,10 @@ app.whenReady().then(() => {
       return { success: true };
     } catch (error) {
       console.error('Main: Failed to save credentials:', error);
-      return { success: false, error: error.message };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   });
 
@@ -549,7 +552,10 @@ app.whenReady().then(() => {
       return { success: true };
     } catch (error) {
       console.error('Main: Failed to clear credentials:', error);
-      return { success: false, error: error.message };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   });
 
