@@ -10,6 +10,15 @@
 > for ZeusX users. It is not affiliated with, endorsed by, or connected to ISGUS
 > or ZeusX in any way.
 
+---
+
+> **Another Disclaimer:** This project is not and will never be integrated with
+> ZeusX. This means that HermesX will not be able to react to changes made
+> directly in ZeusX.
+>
+> That means that **manual bookings outside of HermesX are possible** but will
+> not be reflected in the HermesX state.
+
 HermesX is a modern, intelligent desktop assistant that helps you maintain a
 healthy work-life balance by reminding you to track your work hours in ZeusX. It
 provides smart notifications and monitoring to ensure you never forget to log
@@ -20,18 +29,14 @@ your time entries.
 > ⚠️ **Testing Phase**: HermesX is currently under development. Testing builds
 > are available from our CI pipeline.
 
-Latest test builds are available as artifacts from our
-[GitHub Actions](https://github.com/florianbeisel/hermesx/actions/workflows/build.yml)
-pipeline:
+Latest test builds are available as
+[releases](https://github.com/florianbeisel/hermesx/releases):
 
-1. Click on the latest successful workflow run
-2. Scroll down to the "Artifacts" section
+1. Click on the latest release
+2. Scroll down to the "Assets" section
 3. Download the appropriate package for your system:
-   - 🍎 macOS: `hermesx-mac.dmg`
-   - 🪟 Windows: `hermesx-win.exe`
-   - 🐧 Linux: `hermesx-linux.deb` or `hermesx-linux.rpm`
-
-Note: You need to be logged into GitHub to download artifacts.
+   - 🍎 macOS: `HermesX-<version>-arm64.dmg`
+   - 🪟 Windows: `HermesX-<version>-Setup.exe`
 
 ## 🎯 Purpose
 
@@ -46,25 +51,49 @@ HermesX serves as a helpful companion for ZeusX users by:
 
 - **Smart Time Tracking**
 
-  - Automatic work state detection
-  - Intelligent break suggestions
-  - Flexible schedule management
-  - Continuous work monitoring
+  - Automatic work state detection:
+    - Work mode detection based on system activity
+  - Intelligent break suggestions:
+    - Configurable short and long break reminders
+    - Auto break suggestions after periods of inactivity
+    - Customizable break durations
+  - Flexible schedule management:
+    - Configurable work days and hours
+    - Customizable start times and work durations
 
 - **Intelligent Notifications**
 
-  - Context-aware notifications
-  - Smart suppression during meetings and gaming
-  - Customizable notification thresholds
-  - Break reminders based on work patterns
+  - Context-aware notifications:
+    - Quiet mode for focused work periods
+    - Context aware notifications based on system activity
+  - Intelligent notification suppression:
+    - Automatic detection of meetings and calls
+    - Gaming mode detection and suppression
+  - Customizable notification settings:
+    - Short and long break reminders
+    - Inactivity thresholds
+  - Break management:
+    - Configurable break durations
+    - Smart break suggestions based on activity
 
 - **System Integration & Security**
   - Native system tray integration
   - Secure credential management
-  - Encrypted storage
-  - Automatic updates
 
 ## 🚀 Getting Started
+
+see [Usage](./docs/usage.md)
+
+### 🔧 Configuration
+
+Access settings through the system tray icon to customize:
+
+- Work schedule and days
+- Break duration and frequency
+- Notification preferences
+- Activity thresholds
+
+## 📦 Development
 
 ### Prerequisites
 
@@ -98,15 +127,6 @@ HermesX serves as a helpful companion for ZeusX users by:
    ```bash
    yarn make
    ```
-
-## 🔧 Configuration
-
-Access settings through the system tray icon to customize:
-
-- Work schedule and days
-- Break duration and frequency
-- Notification preferences
-- Activity thresholds
 
 ## 🛣️ Roadmap
 
