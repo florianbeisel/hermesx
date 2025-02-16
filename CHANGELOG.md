@@ -1,9 +1,8 @@
 ## [0.3.7](https://github.com/florianbeisel/hermesx/compare/v0.3.6...v0.3.7) (2025-02-14)
 
-
 ### Bug Fixes
 
-* wrong configuration leading to missing keychain access on mac os ([8b77b9f](https://github.com/florianbeisel/hermesx/commit/8b77b9fbb7ab6ab70496acb71572dc8edd979019))
+- wrong configuration leading to missing keychain access on mac os ([8b77b9f](https://github.com/florianbeisel/hermesx/commit/8b77b9fbb7ab6ab70496acb71572dc8edd979019))
 
 ## [0.3.6](https://github.com/florianbeisel/hermesx/compare/v0.3.5...v0.3.6) (2025-02-12)
 
@@ -50,11 +49,6 @@
 ### Bug Fixes
 
 - Move Squirrel startup check before app usage ([89ae663](https://github.com/florianbeisel/hermesx/commit/89ae66324680cf3c65137ea0f3f86763cb948e22))
-
-## [0.1.5](https://github.com/florianbeisel/hermesx/compare/v0.1.4...v0.1.5) (2025-02-11)
-
-### Bug Fixes
-
 - Move Squirrel startup check before app usage ([89ae663](https://github.com/florianbeisel/hermesx/commit/89ae66324680cf3c65137ea0f3f86763cb948e22))
 
 ## [0.1.4](https://github.com/florianbeisel/hermesx/compare/v0.1.3...v0.1.4) (2025-02-11)
@@ -110,9 +104,4 @@
 ### Bug Fixes
 
 - improve premature app shutdown when last window cloees ([e13e7dd](https://github.com/florianbeisel/hermesx/commit/e13e7dd996c42ab2edc6c6e6816a7bfc93ca71b2))
-
-## [0.1.1](https://github.com/florianbeisel/hermesx/compare/v0.1.0...v0.1.1) (2025-02-10)
-
-### Bug Fixes
-
 - improve premature app shutdown when last window cloees ([e13e7dd](https://github.com/florianbeisel/hermesx/commit/e13e7dd996c42ab2edc6c6e6816a7bfc93ca71b2))
