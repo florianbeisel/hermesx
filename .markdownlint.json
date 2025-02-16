@@ -1,0 +1,14 @@
+{
+  "files": {
+    "ignore": ["CHANGELOG.md"]
+  },
+  "relaxed": true,
+  "headings": false,
+  "MD024": {
+    "siblings_only": true
+  },
+  "MD004": {
+    "style": "dash"
+  },
+  "no-inline-html": false
+}

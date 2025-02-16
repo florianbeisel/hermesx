@@ -4,15 +4,18 @@ on:
   pull_request:
     branches:
       - '*'
+    paths:
+      - 'src/**'
+      - '**/*.ts'
+      - 'package.json'
+      - 'tsconfig.json'
+      - 'electron-builder.yml'
+      - 'entitlements.plist'
 
 jobs:
-  build:
-    name: Build and Lint (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ windows-latest, macos-latest ]
+  lint:
+    name: Lint and Format Check
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -22,15 +25,40 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: yarn
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      # Lint step using ESLint.
       - name: Lint code with ESLint
         run: yarn lint
+
+      - name: Format check with Prettier
+        run: yarn format:check
+
+  build:
+    name: Build (${{ matrix.os }})
+    needs: lint
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
       - name: Build icons
         run: yarn build:icons
@@ -38,15 +66,12 @@ jobs:
       - name: Build app
         run: yarn make
         env:
-          # Include any necessary environment variables.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Upload built artifacts so you can inspect them in the CI run.
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-artifacts
-          # Adjust the glob patterns as needed to capture your electron-forge output.
           path: |
             out/make/**/*.zip
             out/make/**/*.dmg
