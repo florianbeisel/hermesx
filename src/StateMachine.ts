@@ -18,6 +18,10 @@ export interface WorkAction {
   nextState: WorkState;
 }
 
+export interface TransitionOptions {
+  dryRun?: boolean;
+}
+
 export const STATE_EMOJIS: Record<WorkState, string> = {
   [WorkState.NOT_WORKING]: '🏠', // House for not working
   [WorkState.WORKING]: '⚡', // Lightning bolt for working
@@ -202,7 +206,8 @@ export class StateMachine {
 
   public async transition(
     action: WorkAction,
-    getCurrentTime: () => Date
+    getCurrentTime: () => Date,
+    options: TransitionOptions = {}
   ): Promise<void> {
     if (!STATE_ACTIONS[this.state].includes(action)) {
       throw new Error(`Invalid action ${action.label} for state ${this.state}`);
@@ -215,7 +220,9 @@ export class StateMachine {
         action.nextState === WorkState.FINISHED)
     ) {
       elapsedTime = getCurrentTime().getTime() - this.startTime.getTime();
-      this.totalWorkedTime += elapsedTime;
+      if (!options.dryRun) {
+        this.totalWorkedTime += elapsedTime;
+      }
       this.startTime = null;
     }
 
@@ -224,7 +231,9 @@ export class StateMachine {
       this.finishedForToday = false;
     } else if (action.nextState === WorkState.FINISHED) {
       this.finishedForToday = true;
-      this.totalWorkedTime = 0;
+      if (!options.dryRun) {
+        this.totalWorkedTime = 0;
+      }
     }
 
     this.state =
@@ -237,11 +246,14 @@ export class StateMachine {
         action.nextState,
         elapsedTime
       );
-      this.onStateChange(this.state, notification);
+      // Still notify of state change but mark it as dry run
+      this.onStateChange(this.state, options.dryRun ? undefined : notification);
     }
 
-    // Persist state after transition
-    this.persistState();
+    // Only persist state if not in dry run mode
+    if (!options.dryRun) {
+      this.persistState();
+    }
   }
 
   public isFinishedForToday(): boolean {
