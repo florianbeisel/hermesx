@@ -16,6 +16,7 @@ import {
   WorkState,
   WorkAction,
   STATE_EMOJIS,
+  TransitionOptions,
 } from './StateMachine';
 import { WorkMonitor } from './WorkMonitor';
 import { SettingsWindow } from './SettingsWindow';
@@ -35,6 +36,7 @@ let workMonitor: WorkMonitor;
 const credentialManager = new CredentialManager();
 let menuUpdateTimer: ReturnType<typeof setInterval> | null = null;
 let isQuitting = false;
+let isDryRunMode = false;
 
 // Initialize core services first
 const configManager = new ConfigManager();
@@ -117,9 +119,13 @@ export function formatDuration(duration: number): string {
   return `${hours}h ${minutes}m`;
 }
 
-export async function performAction(action: WorkAction) {
+export async function performAction(
+  action: WorkAction,
+  options: TransitionOptions = {}
+) {
   console.log('Current state:', stateMachine.getState());
   console.log('Performing action:', action);
+  console.log('Options:', options);
 
   const win = createWindow();
 
@@ -167,29 +173,10 @@ export async function performAction(action: WorkAction) {
       })
     `);
 
-    // Wait for login and page content
-    await new Promise<void>((resolve) => {
-      win.webContents.once('did-navigate', async () => {
-        await win.webContents.executeJavaScript(`
-          new Promise((resolve) => {
-            const waitForContent = () => {
-              const targetButton = document.getElementById('${action.buttonId}');
-              if (targetButton) {
-                console.log('Target button found:', targetButton.id);
-                resolve();
-              } else {
-                console.log('Waiting for target button ${action.buttonId}...');
-                setTimeout(waitForContent, 500);
-              }
-            };
-            setTimeout(waitForContent, 1000);
-          })
-        `);
-        resolve();
-      });
-    });
+    // Wait for the page to load after login
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    // Modify the button click and logout section
+    // Execute the action
     await win.webContents.executeJavaScript(`
       new Promise((resolve) => {
         const waitForButton = () => {
@@ -212,7 +199,7 @@ export async function performAction(action: WorkAction) {
               text: targetButton.textContent,
               classes: targetButton.className
             });
-            if (${DRY_RUN}) {
+            if (${options.dryRun}) {
               alert('DRY RUN: Would click button: ' + targetButton.id + ' with text: ' + targetButton.textContent);
             } else {
               targetButton.click();
@@ -230,32 +217,42 @@ export async function performAction(action: WorkAction) {
 
     // After successful action and state transition
     console.log('Transitioning state:', action);
-    await stateMachine.transition(action, getCurrentTime);
+    await stateMachine.transition(action, getCurrentTime, options);
 
-    // For dry runs, close after alert
-    if (DRY_RUN) {
-      win.close();
-      return;
-    }
-
-    // For real runs, do logout first
-    await win.webContents.executeJavaScript(`
+    // Check for error messages
+    const hasError = await win.webContents.executeJavaScript(`
       new Promise((resolve) => {
-        const logoffLink = document.querySelector('#uiMenuLogOff');
-        if (logoffLink) {
-          console.log('Logging out...');
-          logoffLink.click();
-        }
-        resolve();
+        const errorElements = document.querySelectorAll('.dxbButtonHover_Office2003Blue');
+        resolve(errorElements.length > 0);
       })
     `);
 
-    // Wait for logout to complete
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (hasError) {
+      throw new Error('Action failed - error message detected');
+    }
+
+    // For real runs, do logout first
+    if (!options.dryRun) {
+      await win.webContents.executeJavaScript(`
+        new Promise((resolve) => {
+          const logoffLink = document.querySelector('#uiMenuLogOff');
+          if (logoffLink) {
+            console.log('Logging out...');
+            logoffLink.click();
+          }
+          resolve();
+        })
+      `);
+
+      // Wait for logout to complete
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+
     win.close();
   } catch (error) {
-    console.error('Error during action:', error);
+    console.error('Error performing action:', error);
     win.close();
+    throw error;
   }
 }
 
@@ -299,12 +296,13 @@ function createTray() {
     tray = new Tray(icon);
     console.log('Tray created successfully');
 
-    // Add click handler here after tray is created
-    tray.on('click', () => {
-      if (BrowserWindow.getAllWindows().length > 0) {
-        BrowserWindow.getAllWindows()[0].hide();
-      }
-    });
+    // Add shift key detection after tray is created
+    if (tray) {
+      tray.on('click', (event: Electron.KeyboardEvent) => {
+        isDryRunMode = event.shiftKey ?? false;
+        updateContextMenu();
+      });
+    }
   }
 
   // Set initial tooltip
@@ -314,7 +312,7 @@ function createTray() {
   updateContextMenu();
 }
 
-// Update the updateContextMenu function to include settings
+// Update the updateContextMenu function to remove shift detection
 function updateContextMenu() {
   const stateActions = stateMachine.getAvailableActions();
   const startTime = stateMachine.getStartTime();
@@ -358,10 +356,21 @@ function updateContextMenu() {
         ]
       : []),
     { type: 'separator' as const },
+    {
+      label: 'Hold shift for dry run',
+      enabled: false,
+    },
     ...stateActions.map((action) => ({
-      label: `${action.label} ${DRY_RUN ? '(Dry Run)' : ''}`,
-      click: async () => {
-        await performAction(action);
+      label: `${action.label}${isDryRunMode ? ' (Dry Run)' : ''}`,
+      click: async (
+        menuItem: Electron.MenuItem,
+        browserWindow: Electron.BrowserWindow | undefined,
+        event: Electron.KeyboardEvent | undefined
+      ) => {
+        const shiftPressed =
+          typeof event?.shiftKey === 'boolean' ? event.shiftKey : false;
+        const isDryRun = shiftPressed || isDryRunMode;
+        await performAction(action, { dryRun: isDryRun });
       },
     })),
     { type: 'separator' as const },
