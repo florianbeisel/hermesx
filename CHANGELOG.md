@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/florianbeisel/hermesx/compare/v0.3.8...v0.4.0) (2025-02-16)
+
+
+### Features
+
+* Add dry run mode and improve action handling ([e00c55a](https://github.com/florianbeisel/hermesx/commit/e00c55a2ba4c5044897299efe16f334320f8c533))
+
 ## [0.3.8](https://github.com/florianbeisel/hermesx/compare/v0.3.7...v0.3.8) (2025-02-16)
 
 ### Bug Fixes
