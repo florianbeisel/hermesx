@@ -1,9 +1,9 @@
 ## [0.3.8](https://github.com/florianbeisel/hermesx/compare/v0.3.7...v0.3.8) (2025-02-16)
 
-
 ### Bug Fixes
 
-* improve error handling for credential operations ([ef05302](https://github.com/florianbeisel/hermesx/commit/ef0530291d66130e2fed4c138c56044449b56014))
+- improve error handling for credential operations
+  ([ef05302](https://github.com/florianbeisel/hermesx/commit/ef0530291d66130e2fed4c138c56044449b56014))
 
 ## [0.3.7](https://github.com/florianbeisel/hermesx/compare/v0.3.6...v0.3.7) (2025-02-14)
 
