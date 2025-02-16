@@ -5,5 +5,8 @@
   "bracketSpacing": true,
   "arrowParens": "always",
   "endOfLine": "lf",
-  "jsxSingleQuote": true
+  "jsxSingleQuote": true,
+  "printWidth": 80,
+  "proseWrap": "always",
+  "embeddedLanguageFormatting": "auto"
 }

@@ -9,5 +9,6 @@
   },
   "MD004": {
     "style": "dash"
-  }
+  },
+  "no-inline-html": false
 }
