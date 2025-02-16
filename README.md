@@ -1,18 +1,28 @@
 # HermesX - Intelligent Work Time Tracking Assistant
 
+<!-- markdownlint-disable MD013 -->
 <p align="center">
-<img src="https://raw.githubusercontent.com/florianbeisel/hermesx/refs/heads/main/assets/icon.png" width="300" />
+   <img src="https://raw.githubusercontent.com/florianbeisel/hermesx/refs/heads/main/assets/icon.png" width="300" alt="HermesX Logo" />
 </p>
+<!-- markdownlint-enable MD013 -->
 
-> **Disclaimer:** HermesX is an independent, unofficial companion application for ZeusX users. It is not affiliated with, endorsed by, or connected to ISGUS or ZeusX in any way.
+> **Disclaimer:** HermesX is an independent, unofficial companion application
+> for ZeusX users. It is not affiliated with, endorsed by, or connected to ISGUS
+> or ZeusX in any way.
 
-HermesX is a modern, intelligent desktop assistant that helps you maintain a healthy work-life balance by reminding you to track your work hours in ZeusX. It provides smart notifications and monitoring to ensure you never forget to log your time entries.
+HermesX is a modern, intelligent desktop assistant that helps you maintain a
+healthy work-life balance by reminding you to track your work hours in ZeusX. It
+provides smart notifications and monitoring to ensure you never forget to log
+your time entries.
 
 ## 📥 Download
 
-> ⚠️ **Testing Phase**: HermesX is currently under development. Testing builds are available from our CI pipeline.
+> ⚠️ **Testing Phase**: HermesX is currently under development. Testing builds
+> are available from our CI pipeline.
 
-Latest test builds are available as artifacts from our [GitHub Actions](https://github.com/florianbeisel/hermesx/actions/workflows/build.yml) pipeline:
+Latest test builds are available as artifacts from our
+[GitHub Actions](https://github.com/florianbeisel/hermesx/actions/workflows/build.yml)
+pipeline:
 
 1. Click on the latest successful workflow run
 2. Scroll down to the "Artifacts" section
@@ -104,7 +114,8 @@ Access settings through the system tray icon to customize:
 
 - [ ] Advanced activity detection
 - [ ] Calendar integration (i.e. for holidays, working days, etc.)
-- [ ] Advanced notification suppression (i.e. for phone calls, meetings, etc. and gaming)
+- [ ] Advanced notification suppression (i.e. for phone calls, meetings, etc.
+      and gaming)
 
 ### Features Status
 
@@ -128,7 +139,8 @@ We welcome contributions! If you'd like to help improve HermesX, please:
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
+for details.
 
 ## 🙏 Acknowledgments
 
