@@ -11,6 +11,7 @@ on:
       - 'tsconfig.json'
       - 'electron-builder.yml'
       - 'entitlements.plist'
+  workflow_dispatch:
 
 jobs:
   preflight:
