@@ -325,7 +325,7 @@ export class NotificationManager {
         case 'win32':
           exec(
             'wmic process get description',
-            (error: Error, stdout: string) => {
+            (error: Error | null, stdout: string) => {
               if (error) {
                 console.error('Error getting processes:', error);
                 resolve([]);
@@ -341,7 +341,7 @@ export class NotificationManager {
           break;
 
         case 'darwin': // macOS
-          exec('ps -ax -o comm=', (error: Error, stdout: string) => {
+          exec('ps -ax -o comm=', (error: Error | null, stdout: string) => {
             if (error) {
               console.error('Error getting processes:', error);
               resolve([]);

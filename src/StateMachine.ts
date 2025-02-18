@@ -1,7 +1,7 @@
 import { getCurrentTime } from './main';
 import { app } from 'electron';
-import path from 'node:path';
-import fs from 'node:fs';
+import path from 'path';
+import fs from 'fs';
 import { NotificationManager } from './types/NotificationManager';
 
 export enum WorkState {
@@ -83,6 +83,12 @@ interface PersistentState {
   totalWorkedTime: number;
 }
 
+interface ButtonMapping {
+  state: string;
+  action: string;
+  buttonId: string;
+}
+
 export class StateMachine {
   private state: WorkState = WorkState.NOT_WORKING;
   private startTime: Date | null = null;
@@ -93,16 +99,16 @@ export class StateMachine {
   ) => void;
   private finishedForToday = false;
   private notificationManager?: NotificationManager;
+  private buttonMappings: ButtonMapping[] = [];
 
   constructor(notificationManager?: NotificationManager) {
     this.notificationManager = notificationManager;
+    this.loadButtonMappings();
 
-    // Add null check before restoration
     try {
       this.restoreState();
     } catch (error) {
       console.error('Failed to restore state:', error);
-      // Initialize with default state instead
       this.initializeDefaultState();
     }
   }
@@ -114,6 +120,33 @@ export class StateMachine {
     this.startTime = null;
     this.totalWorkedTime = 0;
     this.finishedForToday = false;
+  }
+
+  private loadButtonMappings(): void {
+    try {
+      const mappingsPath = path.join(
+        app.getPath('userData'),
+        'button-mappings.json'
+      );
+      if (fs.existsSync(mappingsPath)) {
+        const data = fs.readFileSync(mappingsPath, 'utf8');
+        this.buttonMappings = JSON.parse(data);
+      }
+    } catch (error) {
+      console.error('Failed to load button mappings:', error);
+      // Fall back to default mappings
+      this.buttonMappings = [];
+    }
+  }
+
+  public getButtonIdForAction(
+    state: WorkState,
+    actionLabel: string
+  ): string | undefined {
+    const mapping = this.buttonMappings.find(
+      (m) => m.state === state && m.action === actionLabel
+    );
+    return mapping?.buttonId;
   }
 
   public getState(): WorkState {
@@ -129,7 +162,12 @@ export class StateMachine {
   }
 
   public getAvailableActions(): WorkAction[] {
-    return STATE_ACTIONS[this.state];
+    const defaultActions = STATE_ACTIONS[this.state];
+    return defaultActions.map((action) => ({
+      ...action,
+      buttonId:
+        this.getButtonIdForAction(this.state, action.label) || action.buttonId,
+    }));
   }
 
   private getStateNotification(
@@ -209,7 +247,15 @@ export class StateMachine {
     getCurrentTime: () => Date,
     options: TransitionOptions = {}
   ): Promise<void> {
-    if (!STATE_ACTIONS[this.state].includes(action)) {
+    // Check if the action is valid for current state
+    const validActions = this.getAvailableActions();
+    const isValidAction = validActions.some(
+      (validAction) =>
+        validAction.label === action.label &&
+        validAction.nextState === action.nextState
+    );
+
+    if (!isValidAction) {
       throw new Error(`Invalid action ${action.label} for state ${this.state}`);
     }
 
@@ -298,5 +344,9 @@ export class StateMachine {
     if (this.notificationManager?.onWorkStateChange) {
       this.notificationManager.onWorkStateChange(this.state);
     }
+  }
+
+  public reloadButtonMappings(): void {
+    this.loadButtonMappings();
   }
 }

@@ -198,6 +198,18 @@ export class SettingsWindow {
             </label>
           </div>
 
+          <div class="section">
+            <h2>ZeusX Button Configuration</h2>
+            <div id="buttonMappingSection" style="display: none;">
+              <div id="buttonMappings"></div>
+              <button id="fetchZeusXButtons" style="margin-right: 10px;">Fetch ZeusX Buttons</button>
+              <button id="saveButtonMappings">Save Button Mappings</button>
+            </div>
+            <div id="noCredentials">
+              Please save your credentials first to configure ZeusX buttons.
+            </div>
+          </div>
+
           <button onclick="window.electronAPI.saveConfig(getFormData())">Save Settings</button>
 
           <script>
@@ -297,6 +309,8 @@ export class SettingsWindow {
               
               if (result.success) {
                 alert('Credentials saved successfully');
+                document.getElementById('buttonMappingSection').style.display = 'block';
+                document.getElementById('noCredentials').style.display = 'none';
               } else {
                 alert('Failed to save credentials: ' + result.error);
               }
@@ -312,6 +326,14 @@ export class SettingsWindow {
               }
             }
 
+            // Add styles for button mapping
+            const styleSheet = document.createElement("style");
+            styleSheet.textContent = 
+              '.button-mapping { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }' +
+              '.button-mapping select { margin: 5px; padding: 5px; border-radius: 4px; }' +
+              '.button-mapping label { display: inline-block; width: 120px; }';
+            document.head.appendChild(styleSheet);
+
             // Set up event listeners when the document loads
             document.addEventListener('DOMContentLoaded', () => {
               setFormData();
@@ -320,7 +342,132 @@ export class SettingsWindow {
               // Add button click handlers
               document.getElementById('saveCredentialsBtn').addEventListener('click', handleSaveCredentials);
               document.getElementById('clearCredentialsBtn').addEventListener('click', handleClearCredentials);
+              document.getElementById('fetchZeusXButtons').addEventListener('click', handleFetchZeusXButtons);
+              document.getElementById('saveButtonMappings').addEventListener('click', handleSaveButtonMappings);
+
+              // Check if credentials exist to show/hide button mapping section
+              window.electronAPI.getCredentials().then(credentials => {
+                if (credentials?.username && credentials?.password) {
+                  document.getElementById('buttonMappingSection').style.display = 'block';
+                  document.getElementById('noCredentials').style.display = 'none';
+                }
+              });
             });
+
+            async function handleFetchZeusXButtons() {
+              try {
+                const buttons = await window.electronAPI.fetchZeusXButtons();
+                const states = ['NOT_WORKING', 'WORKING', 'PAUSED', 'FINISHED'];
+                const transitions = {
+                  NOT_WORKING: ['Start Work'],
+                  WORKING: ['Start Break', 'Finish Work'],
+                  PAUSED: ['Return from Break', 'Finish Work'],
+                  FINISHED: []
+                };
+
+                const buttonMappingsDiv = document.getElementById('buttonMappings');
+                buttonMappingsDiv.innerHTML = '';
+
+                // Create a section for each state
+                states.forEach(state => {
+                  if (transitions[state].length === 0) return; // Skip states with no actions
+
+                  const stateSection = document.createElement('div');
+                  stateSection.className = 'state-section';
+                  
+                  const stateHeader = document.createElement('h3');
+                  stateHeader.textContent = state;
+                  stateSection.appendChild(stateHeader);
+
+                  // Create dropdown for each action in this state
+                  transitions[state].forEach(action => {
+                    const actionDiv = document.createElement('div');
+                    actionDiv.className = 'action-mapping';
+                    
+                    const actionLabel = document.createElement('label');
+                    actionLabel.textContent = action + ': ';
+                    
+                    const buttonSelect = document.createElement('select');
+                    buttonSelect.className = 'button-select';
+                    
+                    // Add an "Unset" option
+                    const unsetOption = document.createElement('option');
+                    unsetOption.value = '';
+                    unsetOption.textContent = '-- Select Button --';
+                    buttonSelect.appendChild(unsetOption);
+                    
+                    // Add all available buttons as options
+                    buttons.forEach(button => {
+                      const option = document.createElement('option');
+                      option.value = button.id;
+                      option.textContent = button.label + ' (' + button.id + ')';
+                      buttonSelect.appendChild(option);
+                    });
+
+                    actionDiv.appendChild(actionLabel);
+                    actionDiv.appendChild(buttonSelect);
+                    stateSection.appendChild(actionDiv);
+                  });
+
+                  buttonMappingsDiv.appendChild(stateSection);
+                });
+
+                // Add styles for the new layout
+                const styleSheet = document.createElement("style");
+                styleSheet.textContent = 
+                  '.state-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; }' +
+                  '.state-section h3 { margin: 0 0 15px 0; color: #333; }' +
+                  '.action-mapping { margin: 10px 0; }' +
+                  '.action-mapping label { display: inline-block; width: 150px; }' +
+                  '.button-select { width: 250px; padding: 5px; margin-left: 10px; }';
+                document.head.appendChild(styleSheet);
+
+                // Load existing mappings if available
+                window.electronAPI.loadButtonMappings().then(mappings => {
+                  document.querySelectorAll('.action-mapping').forEach(mapping => {
+                    const state = mapping.closest('.state-section').querySelector('h3').textContent;
+                    const action = mapping.querySelector('label').textContent.replace(': ', '');
+                    const buttonSelect = mapping.querySelector('.button-select');
+                    
+                    const existingMapping = mappings.find(m => 
+                      m.state === state && m.action === action
+                    );
+                    
+                    if (existingMapping) {
+                      buttonSelect.value = existingMapping.buttonId;
+                    }
+                  });
+                });
+              } catch (error) {
+                console.error('Failed to fetch ZeusX buttons:', error);
+                alert('Failed to fetch ZeusX buttons. Please check your credentials and try again.');
+              }
+            }
+
+            async function handleSaveButtonMappings() {
+              const mappings = [];
+              document.querySelectorAll('.action-mapping').forEach(mapping => {
+                const state = mapping.closest('.state-section').querySelector('h3').textContent;
+                const action = mapping.querySelector('label').textContent.replace(': ', '');
+                const buttonSelect = mapping.querySelector('.button-select');
+                
+                if (buttonSelect.value) { // Only save if a button is selected
+                  mappings.push({
+                    state: state,
+                    action: action,
+                    buttonId: buttonSelect.value
+                  });
+                }
+              });
+
+              try {
+                await window.electronAPI.saveButtonMappings(mappings);
+                alert('Button mappings saved successfully');
+              } catch (error) {
+                console.error('Failed to save button mappings:', error);
+                alert('Failed to save button mappings');
+              }
+            }
           </script>
         </body>
       </html>
