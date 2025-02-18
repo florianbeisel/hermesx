@@ -86,6 +86,120 @@ export const stateMachine = new StateMachine({
   },
 });
 
+// Add interfaces for button configuration
+interface ButtonMapping {
+  state: string;
+  action: string;
+  buttonId: string;
+}
+
+interface ZeusXButton {
+  id: string;
+  label: string;
+}
+
+// Add button mapping storage
+const BUTTON_MAPPINGS_FILE = path.join(
+  app.getPath('userData'),
+  'button-mappings.json'
+);
+
+// Add function to fetch ZeusX buttons
+async function fetchZeusXButtons(): Promise<ZeusXButton[]> {
+  const credentials = await credentialManager.getCredentials();
+  if (!credentials) {
+    throw new Error('No credentials found');
+  }
+
+  const win = createWindow();
+
+  try {
+    // Load URL and wait for page
+    await win.loadURL('https://zeusx.intersport.de');
+
+    // Login first
+    await win.webContents.executeJavaScript(`
+      new Promise((resolve) => {
+        try {
+          const usernameElements = document.getElementsByName('uiUserName');
+          const passwordElements = document.getElementsByName('uiPassword');
+          const loginButton = document.getElementById('uiLogOnButton_I');
+          
+          if (usernameElements.length > 0) {
+            usernameElements[0].value = '${credentials.username}';
+          }
+          if (passwordElements.length > 0) {
+            passwordElements[0].value = '${credentials.password}';
+          }
+          if (loginButton) {
+            loginButton.click();
+          }
+          resolve();
+        } catch (error) {
+          console.error('Error:', error);
+          resolve();
+        }
+      })
+    `);
+
+    // Wait for the page to load after login
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Fetch all terminal buttons
+    const buttons = await win.webContents.executeJavaScript(`
+      new Promise((resolve) => {
+        const buttons = Array.from(document.querySelectorAll('[id^="TerminalButton"]')).map(button => ({
+          id: button.id,
+          label: button.textContent?.trim() || ''
+        }));
+        resolve(buttons);
+      })
+    `);
+
+    // Perform logout
+    await win.webContents.executeJavaScript(`
+      new Promise((resolve) => {
+        const logoffLink = document.querySelector('#uiMenuLogOff');
+        if (logoffLink) {
+          console.log('Logging out...');
+          logoffLink.click();
+        }
+        resolve();
+      })
+    `);
+
+    win.close();
+    return buttons;
+  } catch (error) {
+    console.error('Error fetching ZeusX buttons:', error);
+    win.close();
+    throw error;
+  }
+}
+
+// Add function to save button mappings
+function saveButtonMappings(mappings: ButtonMapping[]): void {
+  try {
+    fs.writeFileSync(BUTTON_MAPPINGS_FILE, JSON.stringify(mappings, null, 2));
+  } catch (error) {
+    console.error('Failed to save button mappings:', error);
+    throw error;
+  }
+}
+
+// Add function to load button mappings
+function loadButtonMappings(): ButtonMapping[] {
+  try {
+    if (fs.existsSync(BUTTON_MAPPINGS_FILE)) {
+      const data = fs.readFileSync(BUTTON_MAPPINGS_FILE, 'utf8');
+      return JSON.parse(data);
+    }
+  } catch (error) {
+    console.error('Failed to load button mappings:', error);
+  }
+  return [];
+}
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
@@ -580,6 +694,32 @@ app.whenReady().then(() => {
   if (app.isPackaged) {
     new AutoUpdater();
   }
+
+  // Add IPC handlers for ZeusX button configuration and button fetching functionality
+  ipcMain.handle('fetch-zeusx-buttons', async () => {
+    try {
+      return await fetchZeusXButtons();
+    } catch (error) {
+      console.error('Failed to fetch ZeusX buttons:', error);
+      throw error;
+    }
+  });
+
+  ipcMain.handle(
+    'save-button-mappings',
+    async (_, mappings: ButtonMapping[]) => {
+      try {
+        saveButtonMappings(mappings);
+      } catch (error) {
+        console.error('Failed to save button mappings:', error);
+        throw error;
+      }
+    }
+  );
+
+  ipcMain.handle('load-button-mappings', () => {
+    return loadButtonMappings();
+  });
 });
 
 // Update app quit handling

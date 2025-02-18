@@ -19,6 +19,9 @@ declare global {
       clearCredentialsFromMain: () => Promise<{ success: boolean }>;
       saveCredentials?: () => Promise<void>;
       clearCredentials?: () => Promise<void>;
+      fetchZeusXButtons: () => Promise<ButtonMapping[]>;
+      saveButtonMappings: (mappings: ButtonMapping[]) => Promise<void>;
+      loadButtonMappings: () => Promise<ButtonMapping[]>;
     };
   }
 }
@@ -54,4 +57,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
     console.log('Preload: Clear result:', result);
     return result;
   },
+  fetchZeusXButtons: () => ipcRenderer.invoke('fetch-zeusx-buttons'),
+  saveButtonMappings: (mappings: ButtonMapping[]) =>
+    ipcRenderer.invoke('save-button-mappings', mappings),
+  loadButtonMappings: () => ipcRenderer.invoke('load-button-mappings'),
 });
+
+// Add type definitions
+interface ButtonMapping {
+  state: string;
+  action: string;
+  buttonId: string;
+}
