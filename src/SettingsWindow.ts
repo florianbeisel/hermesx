@@ -357,83 +357,84 @@ export class SettingsWindow {
             async function handleFetchZeusXButtons() {
               try {
                 const buttons = await window.electronAPI.fetchZeusXButtons();
-                const buttonMappingsDiv = document.getElementById('buttonMappings');
-                buttonMappingsDiv.innerHTML = '';
-
-                const states = ['UNSET', 'NOT_WORKING', 'WORKING', 'PAUSED', 'FINISHED'];
+                const states = ['NOT_WORKING', 'WORKING', 'PAUSED', 'FINISHED'];
                 const transitions = {
-                  UNSET: [],
                   NOT_WORKING: ['Start Work'],
                   WORKING: ['Start Break', 'Finish Work'],
                   PAUSED: ['Return from Break', 'Finish Work'],
                   FINISHED: []
                 };
 
-                buttons.forEach(button => {
-                  const mappingDiv = document.createElement('div');
-                  mappingDiv.className = 'button-mapping';
+                const buttonMappingsDiv = document.getElementById('buttonMappings');
+                buttonMappingsDiv.innerHTML = '';
+
+                // Create a section for each state
+                states.forEach(state => {
+                  if (transitions[state].length === 0) return; // Skip states with no actions
+
+                  const stateSection = document.createElement('div');
+                  stateSection.className = 'state-section';
                   
-                  const label = document.createElement('label');
-                  label.textContent = \`\${button.label} (\${button.id}):\`;
-                  
-                  const stateSelect = document.createElement('select');
-                  stateSelect.className = 'state-select';
-                  states.forEach(state => {
-                    const option = document.createElement('option');
-                    option.value = state;
-                    option.textContent = state === 'UNSET' ? '-- Unset --' : state;
-                    stateSelect.appendChild(option);
+                  const stateHeader = document.createElement('h3');
+                  stateHeader.textContent = state;
+                  stateSection.appendChild(stateHeader);
+
+                  // Create dropdown for each action in this state
+                  transitions[state].forEach(action => {
+                    const actionDiv = document.createElement('div');
+                    actionDiv.className = 'action-mapping';
+                    
+                    const actionLabel = document.createElement('label');
+                    actionLabel.textContent = action + ': ';
+                    
+                    const buttonSelect = document.createElement('select');
+                    buttonSelect.className = 'button-select';
+                    
+                    // Add an "Unset" option
+                    const unsetOption = document.createElement('option');
+                    unsetOption.value = '';
+                    unsetOption.textContent = '-- Select Button --';
+                    buttonSelect.appendChild(unsetOption);
+                    
+                    // Add all available buttons as options
+                    buttons.forEach(button => {
+                      const option = document.createElement('option');
+                      option.value = button.id;
+                      option.textContent = button.label + ' (' + button.id + ')';
+                      buttonSelect.appendChild(option);
+                    });
+
+                    actionDiv.appendChild(actionLabel);
+                    actionDiv.appendChild(buttonSelect);
+                    stateSection.appendChild(actionDiv);
                   });
 
-                  const actionSelect = document.createElement('select');
-                  actionSelect.className = 'action-select';
-                  actionSelect.style.display = 'none'; // Hide initially
-                  
-                  stateSelect.onchange = () => {
-                    actionSelect.innerHTML = '';
-                    const selectedState = stateSelect.value;
-                    
-                    if (selectedState === 'UNSET') {
-                      actionSelect.style.display = 'none';
-                      return;
-                    }
-                    
-                    const availableTransitions = transitions[selectedState] || [];
-                    if (availableTransitions.length > 0) {
-                      actionSelect.style.display = 'inline-block';
-                      availableTransitions.forEach(transition => {
-                        const option = document.createElement('option');
-                        option.value = transition;
-                        option.textContent = transition;
-                        actionSelect.appendChild(option);
-                      });
-                    }
-                  };
-
-                  mappingDiv.appendChild(label);
-                  mappingDiv.appendChild(stateSelect);
-                  mappingDiv.appendChild(actionSelect);
-                  buttonMappingsDiv.appendChild(mappingDiv);
-                  
-                  // Trigger initial state selection
-                  stateSelect.dispatchEvent(new Event('change'));
+                  buttonMappingsDiv.appendChild(stateSection);
                 });
+
+                // Add styles for the new layout
+                const styleSheet = document.createElement("style");
+                styleSheet.textContent = 
+                  '.state-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; }' +
+                  '.state-section h3 { margin: 0 0 15px 0; color: #333; }' +
+                  '.action-mapping { margin: 10px 0; }' +
+                  '.action-mapping label { display: inline-block; width: 150px; }' +
+                  '.button-select { width: 250px; padding: 5px; margin-left: 10px; }';
+                document.head.appendChild(styleSheet);
 
                 // Load existing mappings if available
                 window.electronAPI.loadButtonMappings().then(mappings => {
-                  document.querySelectorAll('.button-mapping').forEach(mapping => {
-                    const buttonId = mapping.querySelector('label').textContent.split('(')[1].split(')')[0];
-                    const existingMapping = mappings.find(m => m.buttonId === buttonId);
+                  document.querySelectorAll('.action-mapping').forEach(mapping => {
+                    const state = mapping.closest('.state-section').querySelector('h3').textContent;
+                    const action = mapping.querySelector('label').textContent.replace(': ', '');
+                    const buttonSelect = mapping.querySelector('.button-select');
+                    
+                    const existingMapping = mappings.find(m => 
+                      m.state === state && m.action === action
+                    );
                     
                     if (existingMapping) {
-                      const stateSelect = mapping.querySelector('.state-select');
-                      stateSelect.value = existingMapping.state;
-                      stateSelect.dispatchEvent(new Event('change'));
-                      
-                      const actionSelect = mapping.querySelector('.action-select');
-                      if (actionSelect && existingMapping.state !== 'UNSET') {
-                        actionSelect.value = existingMapping.action;
-                      }
+                      buttonSelect.value = existingMapping.buttonId;
                     }
                   });
                 });
@@ -445,16 +446,16 @@ export class SettingsWindow {
 
             async function handleSaveButtonMappings() {
               const mappings = [];
-              document.querySelectorAll('.button-mapping').forEach(mapping => {
-                const stateSelect = mapping.querySelector('.state-select');
-                const actionSelect = mapping.querySelector('.action-select');
-                const buttonId = mapping.querySelector('label').textContent.split('(')[1].split(')')[0];
+              document.querySelectorAll('.action-mapping').forEach(mapping => {
+                const state = mapping.closest('.state-section').querySelector('h3').textContent;
+                const action = mapping.querySelector('label').textContent.replace(': ', '');
+                const buttonSelect = mapping.querySelector('.button-select');
                 
-                if (stateSelect && stateSelect.value !== 'UNSET') {
+                if (buttonSelect.value) { // Only save if a button is selected
                   mappings.push({
-                    state: stateSelect.value,
-                    action: actionSelect.value,
-                    buttonId: buttonId
+                    state: state,
+                    action: action,
+                    buttonId: buttonSelect.value
                   });
                 }
               });

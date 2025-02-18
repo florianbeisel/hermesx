@@ -247,7 +247,15 @@ export class StateMachine {
     getCurrentTime: () => Date,
     options: TransitionOptions = {}
   ): Promise<void> {
-    if (!STATE_ACTIONS[this.state].includes(action)) {
+    // Check if the action is valid for current state
+    const validActions = this.getAvailableActions();
+    const isValidAction = validActions.some(
+      (validAction) =>
+        validAction.label === action.label &&
+        validAction.nextState === action.nextState
+    );
+
+    if (!isValidAction) {
       throw new Error(`Invalid action ${action.label} for state ${this.state}`);
     }
 
@@ -336,5 +344,9 @@ export class StateMachine {
     if (this.notificationManager?.onWorkStateChange) {
       this.notificationManager.onWorkStateChange(this.state);
     }
+  }
+
+  public reloadButtonMappings(): void {
+    this.loadButtonMappings();
   }
 }

@@ -145,16 +145,36 @@ async function fetchZeusXButtons(): Promise<ZeusXButton[]> {
     // Wait for the page to load after login
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    // Fetch all terminal buttons
+    // Fetch all terminal buttons with retry
     const buttons = await win.webContents.executeJavaScript(`
       new Promise((resolve) => {
-        const buttons = Array.from(document.querySelectorAll('[id^="TerminalButton"]')).map(button => ({
-          id: button.id,
-          label: button.textContent?.trim() || ''
-        }));
-        resolve(buttons);
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        function tryGetButtons() {
+          const buttons = Array.from(document.querySelectorAll('[id^="TerminalButton"]')).map(button => ({
+            id: button.id,
+            label: button.textContent?.trim() || ''
+          }));
+          
+          if (buttons.length > 0 || attempts >= maxAttempts) {
+            console.log('Found ' + buttons.length + ' buttons after ' + attempts + ' attempts');
+            resolve(buttons);
+          } else {
+            attempts++;
+            console.log('No buttons found yet, attempt ' + attempts + ' of ' + maxAttempts);
+            setTimeout(tryGetButtons, 1000);
+          }
+        }
+        
+        tryGetButtons();
       })
     `);
+
+    // Only proceed with logout if we actually found buttons
+    if (buttons.length === 0) {
+      throw new Error('No terminal buttons found on the page');
+    }
 
     // Perform logout
     await win.webContents.executeJavaScript(`
@@ -710,6 +730,8 @@ app.whenReady().then(() => {
     async (_, mappings: ButtonMapping[]) => {
       try {
         saveButtonMappings(mappings);
+        stateMachine.reloadButtonMappings();
+        updateContextMenu(); // Refresh the context menu to show updated actions
       } catch (error) {
         console.error('Failed to save button mappings:', error);
         throw error;
