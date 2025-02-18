@@ -1,9 +1,9 @@
 ## [0.4.1](https://github.com/florianbeisel/hermesx/compare/v0.4.0...v0.4.1) (2025-02-18)
 
-
 ### Bug Fixes
 
-* update display on statemachine change ([c7ab663](https://github.com/florianbeisel/hermesx/commit/c7ab663df1e5a11a4e0612f4140b39807c6d190b))
+- update display on statemachine change
+  ([c7ab663](https://github.com/florianbeisel/hermesx/commit/c7ab663df1e5a11a4e0612f4140b39807c6d190b))
 
 # [0.4.0](https://github.com/florianbeisel/hermesx/compare/v0.3.8...v0.4.0) (2025-02-16)
 
