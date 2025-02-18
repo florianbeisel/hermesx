@@ -7,8 +7,7 @@
   "MD024": {
     "siblings_only": true
   },
-  "MD004": {
-    "style": "dash"
-  },
+  "unordered-list-style": false,
+  "list-marker-space": false,
   "no-inline-html": false
 }

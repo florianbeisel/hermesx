@@ -77,7 +77,12 @@ const settingsWindow = new SettingsWindow();
 export const stateMachine = new StateMachine({
   onWorkStateChange: (newState: WorkState) => {
     workMonitor.onWorkStateChange(newState);
+    // Force immediate tray update
     updateContextMenu();
+    // Schedule next update if in a working or paused state
+    if (newState === WorkState.WORKING || newState === WorkState.PAUSED) {
+      startMenuUpdateTimer();
+    }
   },
 });
 
@@ -218,6 +223,9 @@ export async function performAction(
     // After successful action and state transition
     console.log('Transitioning state:', action);
     await stateMachine.transition(action, getCurrentTime, options);
+
+    // Force immediate tray update after state transition
+    updateContextMenu();
 
     // Check for error messages
     const hasError = await win.webContents.executeJavaScript(`
