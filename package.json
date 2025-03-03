@@ -34,7 +34,7 @@
     "@types/electron-squirrel-startup": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
-    "electron": "34.1.1",
+    "electron": "34.3.0",
     "electron-builder": "^25.1.8",
     "electron-icon-builder": "^2.0.1",
     "eslint": "^8.0.1",
